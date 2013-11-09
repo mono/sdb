@@ -30,6 +30,8 @@ namespace Mono.Debugger.Client
 
         readonly List<Tuple<string, Command>> _commands = new List<Tuple<string, Command>>();
 
+        Command _forwardTarget;
+
         public IEnumerable<Tuple<string, Command>> Commands
         {
             get { return _commands; }
@@ -103,6 +105,11 @@ namespace Mono.Debugger.Client
             AddCommandWithName(typeof(T), name);
         }
 
+        protected void Forward<T>()
+        {
+            _forwardTarget = Instantiate(typeof(T));
+        }
+
         public override sealed void Process(string args)
         {
             var name = args.Split(' ').Where(x => x != string.Empty).FirstOrDefault();
@@ -133,7 +140,12 @@ namespace Mono.Debugger.Client
             if (invalidSubCommand)
                 Log.Error("Invalid sub-command given to '{0}'", Names[0]);
             else
-                Log.Error("No '{0}' sub-command specified", Names[0]);
+            {
+                if (_forwardTarget != null)
+                    _forwardTarget.Process(args);
+                else
+                    Log.Error("No '{0}' sub-command specified", Names[0]);
+            }
         }
     }
 }

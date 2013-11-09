@@ -35,6 +35,8 @@ line to affect the build:
     * `CD`: Path to the `cd` POSIX utility.
     * `CHMOD`: Path to the `chmod` POSIX utility.
     * `CP`: Path to the `cp` POSIX utility.
+    * `GENDARME`: Which Gendarme executable to use (optional).
+    * `GENDARME_FLAGS`: Flags to pass to Gendarme.
     * `MCS`: Which MCS executable to use.
     * `MCS_FLAGS`: Flags to pass to MCS.
     * `MKDIR`: Path to the `mkdir` POSIX utility.

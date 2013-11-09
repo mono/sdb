@@ -1,6 +1,7 @@
 CD ?= cd
 CHMOD ?= chmod
 CP ?= cp
+GENDARME ?= gendarme
 MCS ?= mcs
 MKDIR ?= mkdir
 PKG_CONFIG ?= pkg-config
@@ -23,8 +24,9 @@ endif
 
 MCS_FLAGS += -langversion:future -unsafe -warnaserror
 XBUILD_FLAGS += /verbosity:quiet /nologo /property:Configuration=$(xb_mode)
+GENDARME_FLAGS += --severity all --confidence all
 
-.PHONY: all clean
+.PHONY: all clean gendarme
 
 override refs = \
 	ICSharpCode.NRefactory.dll \
@@ -40,6 +42,9 @@ all: bin/sdb bin/sdb.exe bin/COPYING bin/README
 clean:
 	$(RM) -r bin
 	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) /target:Clean
+
+gendarme: bin/sdb.exe
+	$(GENDARME) $(GENDARME_FLAGS) --log bin/sdb.log $<
 
 $(addprefix bin/, $(refs)):
 	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) debugger-libs.sln

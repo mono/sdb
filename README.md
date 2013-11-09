@@ -205,6 +205,14 @@ into the root command list.
 For SDB to find custom commands, they should be compiled into `.dll` assemblies
 and put in `~/.sdb` (or some other directory specified `SDB_PATH`).
 
+## Licensing
+
+Though I am not particularly fond of the GNU licenses, SDB makes use of the
+`libreadline` library which is licensed under the GPL v3. Thus, for reasons of
+practicality, SDB is licensed under the GPL v3 as well.
+
+For the boring details, see the `COPYING` file.
+
 ## Issues
 
 * Ctrl-C does not work at all. This is because `System.Console.CancelKeyPress`

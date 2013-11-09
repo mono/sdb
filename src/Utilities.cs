@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.IO;
 using Mono.Debugging.Client;
 
 namespace Mono.Debugger.Client
@@ -26,18 +27,53 @@ namespace Mono.Debugger.Client
         public static string StringizeFrame(StackFrame frame, bool includeIndex)
         {
             var loc = string.Empty;
+            string src = null;
 
             if (frame.SourceLocation.FileName != null)
             {
                 loc = " at " + frame.SourceLocation.FileName;
 
                 if (frame.SourceLocation.Line != -1)
+                {
                     loc += ":" + frame.SourceLocation.Line;
+
+                    StreamReader reader = null;
+
+                    try
+                    {
+                        reader = File.OpenText(frame.SourceLocation.FileName);
+
+                        var cur = 1;
+
+                        while (!reader.EndOfStream)
+                        {
+                            var str = reader.ReadLine();
+
+                            if (cur == frame.SourceLocation.Line)
+                            {
+                                src = str;
+                                break;
+                            }
+
+                            cur++;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    finally
+                    {
+                        if (reader != null)
+                            reader.Dispose();
+                    }
+                }
             }
 
             var idx = includeIndex ? string.Format("#{0} ", frame.Index) : string.Empty;
+            var srcStr = src != null ? Environment.NewLine + src : string.Empty;
 
-            return string.Format("{0}[0x{1:X8}] {2}{3}", idx, frame.Address, frame.SourceLocation.MethodName, loc);
+            return string.Format("{0}[0x{1:X8}] {2}{3}{4}", idx, frame.Address,
+                                 frame.SourceLocation.MethodName, loc, srcStr);
         }
 
         public static string StringizeThread(ThreadInfo thread, bool includeFrame)

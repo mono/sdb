@@ -246,19 +246,21 @@ namespace Mono.Debugger.Client
 
                 Session.TargetExceptionThrown += (sender, e) =>
                 {
-                    if (Configuration.Current.FirstChanceExceptions)
-                    {
-                        PrintException(ActiveException);
+                    var ex = ActiveException;
 
-                        CommandLine.ResumeEvent.Set();
-                    }
+                    Log.Notice("Trapped first-chance exception of type '{0}'", ex.Type);
+                    Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
+
+                    PrintException(ex);
+
+                    CommandLine.ResumeEvent.Set();
                 };
 
                 Session.TargetUnhandledException += (sender, e) =>
                 {
                     var ex = ActiveException;
 
-                    Log.Notice("Unhandled exception '{0}' encountered", ex.Type);
+                    Log.Notice("Trapped unhandled exception of type '{0}'", ex.Type);
                     Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
 
                     PrintException(ex);

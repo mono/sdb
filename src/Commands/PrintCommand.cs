@@ -47,6 +47,12 @@ namespace Mono.Debugger.Client.Commands
                 return;
             }
 
+            if (args.Length == 0)
+            {
+                Log.Error("No expression given");
+                return;
+            }
+
             if (!f.ValidateExpression(args))
             {
                 Log.Error("Expression '{0}' is invalid", args);

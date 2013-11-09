@@ -27,7 +27,7 @@ namespace Mono.Debugger.Client.Commands
         {
             public override string[] Names
             {
-                get { return new[] { "add", "set" }; }
+                get { return new[] { "add" }; }
             }
 
             public override string Summary
@@ -37,7 +37,7 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Syntax
             {
-                get { return "watch|wp add|set <expr>"; }
+                get { return "watch|wp add <expr>"; }
             }
 
             public override void Process(string args)

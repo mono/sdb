@@ -26,7 +26,7 @@ namespace Mono.Debugger.Client.Commands
         {
             public override string[] Names
             {
-                get { return new[] { "add", "set" }; }
+                get { return new[] { "add" }; }
             }
 
             public override string Summary
@@ -36,7 +36,7 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Syntax
             {
-                get { return "break|bp add|set <file> <line>"; }
+                get { return "break|bp add <file> <line>"; }
             }
 
             public override void Process(string args)

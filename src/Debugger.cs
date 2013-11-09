@@ -51,6 +51,8 @@ namespace Mono.Debugger.Client
 
         public static SortedDictionary<long, string> Watchpoints { get; private set; }
 
+        public static BreakpointStore BreakEvents { get; private set; }
+
         static long _nextWatchId;
 
         static volatile bool _showResumeMessage;
@@ -147,6 +149,7 @@ namespace Mono.Debugger.Client
                     return;
 
                 Session = new SoftDebuggerSession();
+                Session.Breakpoints = BreakEvents;
 
                 Session.ExceptionHandler = ex =>
                 {
@@ -414,6 +417,11 @@ namespace Mono.Debugger.Client
             EnvironmentVariables = new Dictionary<string, string>();
             Watchpoints = new SortedDictionary<long, string>();
             _nextWatchId = 0;
+            BreakEvents = new BreakpointStore();
+
+            // Make sure breakpoints/catchpoints take effect.
+            if (Session != null)
+                Session.Breakpoints = BreakEvents;
         }
     }
 }

@@ -17,6 +17,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Mono.Debugger.Client.Commands
 {
@@ -26,7 +27,7 @@ namespace Mono.Debugger.Client.Commands
         {
             public override string[] Names
             {
-                get { return new[] { "add", "set" }; }
+                get { return new[] { "add" }; }
             }
 
             public override string Summary
@@ -36,12 +37,48 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Syntax
             {
-                get { return "catch|cp add|set <type>"; }
+                get { return "catch|cp add <type>"; }
             }
 
             public override void Process(string args)
             {
-                Log.Error("Catchpoints are not yet implemented.");
+                foreach (var cp in Debugger.BreakEvents.GetCatchpoints())
+                {
+                    if (cp.ExceptionName == args)
+                    {
+                        Log.Error("Catchpoint for '{0}' already exists");
+                        return;
+                    }
+                }
+
+                Debugger.BreakEvents.AddCatchpoint(args);
+
+                Log.Info("Catchpoint for '{0}' added", args);
+            }
+        }
+
+        private sealed class CatchClearCommand : Command
+        {
+            public override string[] Names
+            {
+                get { return new[] { "clear" }; }
+            }
+
+            public override string Summary
+            {
+                get { return "Clear all catchpoints."; }
+            }
+
+            public override string Syntax
+            {
+                get { return "catch|cp clear"; }
+            }
+
+            public override void Process(string args)
+            {
+                Debugger.BreakEvents.ClearCatchpoints();
+
+                Log.Info("All catchpoints cleared");
             }
         }
 
@@ -64,7 +101,15 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                Log.Error("Catchpoints are not yet implemented.");
+                if (!Debugger.BreakEvents.GetCatchpoints().Any(x => x.ExceptionName == args))
+                {
+                    Log.Error("No catchpoint for '{0}' found", args);
+                    return;
+                }
+
+                Debugger.BreakEvents.RemoveCatchpoint(args);
+
+                Log.Info("Catchpoint for '{0}' deleted", args);
             }
         }
 
@@ -87,13 +132,23 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                Log.Error("Catchpoints are not yet implemented.");
+                var cps = Debugger.BreakEvents.GetCatchpoints();
+
+                if (cps.Count == 0)
+                {
+                    Log.Info("No catchpoints");
+                    return;
+                }
+
+                foreach (var cp in cps)
+                    Log.Info("'{0}'", cp.ExceptionName);
             }
         }
 
         public CatchCommand()
         {
             AddCommand<CatchAddCommand>();
+            AddCommand<CatchClearCommand>();
             AddCommand<CatchDeleteCommand>();
             AddCommand<CatchListCommand>();
         }

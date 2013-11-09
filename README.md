@@ -9,6 +9,10 @@ such as GDB and LLDB.
 Building and using SDB requires a basic POSIX-like environment, the
 `libreadline` library, and an installed Mono framework.
 
+First, clone the submodules:
+
+	$ git submodule update --init --recursive
+
 To build, run:
 
     $ make

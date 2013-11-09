@@ -210,6 +210,53 @@ into the root command list.
 For SDB to find custom commands, they should be compiled into `.dll` assemblies
 and put in `~/.sdb` (or some other directory specified `SDB_PATH`).
 
+Here's an example of compiling and using a test plugin:
+
+    $ cat test.cs
+    using Mono.Debugger.Client;
+
+    [Command]
+    public sealed class MyCommand : Command
+    {
+        public override string[] Names
+        {
+            get { return new[] { "mycmd" }; }
+        }
+
+        public override string Summary
+        {
+            get { return "Performs magic."; }
+        }
+
+        public override string Syntax
+        {
+            get { return "mycmd"; }
+        }
+
+        public override string Help
+        {
+            get { return "Some sort of detailed help text goes here."; }
+        }
+
+        public override void Process(string args)
+        {
+            Log.Info("Hello! I received: {0}", args);
+        }
+    }
+    $ mcs -debug -t:library test.cs -r:`which sdb`.exe -out:$HOME/.sdb/test.dll
+    $ sdb
+    Welcome to the Mono soft debugger (sdb 1.0.5061.14716)
+    Type 'help' for a list of commands or 'quit' to exit
+
+    (sdb) help mycmd
+
+      mycmd
+
+    Some sort of detailed help text goes here.
+
+    (sdb) mycmd foo bar baz
+    Hello! I received: foo bar baz
+
 ## Licensing
 
 Though I am not particularly fond of the GNU licenses, SDB makes use of the

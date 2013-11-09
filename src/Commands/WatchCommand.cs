@@ -185,6 +185,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<WatchClearCommand>();
             AddCommand<WatchDeleteCommand>();
             AddCommand<WatchListCommand>();
+
+            Forward<WatchListCommand>();
         }
 
         public override string[] Names

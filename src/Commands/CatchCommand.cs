@@ -151,6 +151,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<CatchClearCommand>();
             AddCommand<CatchDeleteCommand>();
             AddCommand<CatchListCommand>();
+
+            Forward<CatchListCommand>();
         }
 
         public override string[] Names

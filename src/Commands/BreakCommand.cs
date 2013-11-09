@@ -120,6 +120,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<BreakClearCommand>();
             AddCommand<BreakDeleteCommand>();
             AddCommand<BreakListCommand>();
+
+            Forward<BreakListCommand>();
         }
 
         public override string[] Names

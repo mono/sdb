@@ -31,6 +31,7 @@ namespace Mono.Debugger.Client.Commands
             AddCommandWithName<ContinueCommand>("c");
             AddCommand<CatchCommand>();
             AddCommand<ConfigCommand>();
+            AddCommandWithName<RunCommand>("r");
             AddCommand<ConnectCommand>();
             AddCommand<ContinueCommand>();
             AddCommand<DatabaseCommand>();
@@ -46,8 +47,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommandWithName<PrintCommand>("p");
             AddCommand<PrintCommand>();
             AddCommand<QuitCommand>();
-            AddCommand<ResetCommand>();
             AddCommandWithName<RunCommand>("r");
+            AddCommand<ResetCommand>();
             AddCommand<RunCommand>();
             AddCommandWithName<StepCommand>("s");
             AddCommand<SourceCommand>();

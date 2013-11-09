@@ -45,6 +45,29 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
+        private sealed class BreakClearCommand : Command
+        {
+            public override string[] Names
+            {
+                get { return new[] { "clear" }; }
+            }
+
+            public override string Summary
+            {
+                get { return "Clear all breakpoints."; }
+            }
+
+            public override string Syntax
+            {
+                get { return "break|bp clear"; }
+            }
+
+            public override void Process(string args)
+            {
+                Log.Error("Breakpoints are not yet implemented.");
+            }
+        }
+
         private sealed class BreakDeleteCommand : Command
         {
             public override string[] Names
@@ -94,6 +117,7 @@ namespace Mono.Debugger.Client.Commands
         public BreakCommand()
         {
             AddCommand<BreakAddCommand>();
+            AddCommand<BreakClearCommand>();
             AddCommand<BreakDeleteCommand>();
             AddCommand<BreakListCommand>();
         }

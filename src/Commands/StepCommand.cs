@@ -202,6 +202,7 @@ namespace Mono.Debugger.Client.Commands
 
         public StepCommand()
         {
+            AddCommandWithName<StepOverCommand>("o");
             AddCommand<StepOverCommand>();
             AddCommand<StepIntoCommand>();
             AddCommand<StepOutCommand>();

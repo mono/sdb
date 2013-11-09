@@ -24,7 +24,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class ConfigCommand : MultiCommand
     {
-        private sealed class ConfigGetCommand : Command
+        sealed class ConfigGetCommand : Command
         {
             public override string[] Names
             {
@@ -66,7 +66,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class ConfigListCommand : Command
+        sealed class ConfigListCommand : Command
         {
             public override string[] Names
             {
@@ -92,7 +92,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class ConfigResetCommand : Command
+        sealed class ConfigResetCommand : Command
         {
             public override string[] Names
             {
@@ -117,7 +117,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class ConfigSetCommand : Command
+        sealed class ConfigSetCommand : Command
         {
             public override string[] Names
             {

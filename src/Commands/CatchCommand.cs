@@ -23,7 +23,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class CatchCommand : MultiCommand
     {
-        private sealed class CatchAddCommand : Command
+        sealed class CatchAddCommand : Command
         {
             public override string[] Names
             {
@@ -57,7 +57,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class CatchClearCommand : Command
+        sealed class CatchClearCommand : Command
         {
             public override string[] Names
             {
@@ -82,7 +82,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class CatchDeleteCommand : Command
+        sealed class CatchDeleteCommand : Command
         {
             public override string[] Names
             {
@@ -113,7 +113,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class CatchListCommand : Command
+        sealed class CatchListCommand : Command
         {
             public override string[] Names
             {

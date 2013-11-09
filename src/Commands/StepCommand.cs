@@ -22,9 +22,9 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class StepCommand : MultiCommand
     {
-        private sealed class StepOverCommand : MultiCommand
+        sealed class StepOverCommand : MultiCommand
         {
-            private sealed class StepOverLineCommand : Command
+            sealed class StepOverLineCommand : Command
             {
                 public override string[] Names
                 {
@@ -50,7 +50,7 @@ namespace Mono.Debugger.Client.Commands
                 }
             }
 
-            private sealed class StepOverInstructionCommand : Command
+            sealed class StepOverInstructionCommand : Command
             {
                 public override string[] Names
                 {
@@ -98,9 +98,9 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class StepIntoCommand : MultiCommand
+        sealed class StepIntoCommand : MultiCommand
         {
-            private sealed class StepIntoLineCommand : Command
+            sealed class StepIntoLineCommand : Command
             {
                 public override string[] Names
                 {
@@ -126,7 +126,7 @@ namespace Mono.Debugger.Client.Commands
                 }
             }
 
-            private sealed class StepIntoInstructionCommand : Command
+            sealed class StepIntoInstructionCommand : Command
             {
                 public override string[] Names
                 {
@@ -174,7 +174,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class StepOutCommand : Command
+        sealed class StepOutCommand : Command
         {
             public override string[] Names
             {

@@ -25,7 +25,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class EnvironmentCommand : MultiCommand
     {
-        private sealed class EnvironmentClearCommand : Command
+        sealed class EnvironmentClearCommand : Command
         {
             public override string[] Names
             {
@@ -50,7 +50,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class EnvironmentDeleteCommand : Command
+        sealed class EnvironmentDeleteCommand : Command
         {
             public override string[] Names
             {
@@ -83,7 +83,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class EnvironmentGetCommand : Command
+        sealed class EnvironmentGetCommand : Command
         {
             public override string[] Names
             {
@@ -119,7 +119,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class EnvironmentInheritCommand : Command
+        sealed class EnvironmentInheritCommand : Command
         {
             public override string[] Names
             {
@@ -143,7 +143,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class EnvironmentListCommand : Command
+        sealed class EnvironmentListCommand : Command
         {
             public override string[] Names
             {
@@ -173,7 +173,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class EnvironmentSetCommand : Command
+        sealed class EnvironmentSetCommand : Command
         {
             public override string[] Names
             {

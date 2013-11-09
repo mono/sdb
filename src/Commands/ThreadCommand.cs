@@ -22,7 +22,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class ThreadCommand : MultiCommand
     {
-        private sealed class ThreadBacktraceCommand : Command
+        sealed class ThreadBacktraceCommand : Command
         {
             public override string[] Names
             {
@@ -85,7 +85,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class ThreadGetCommand : Command
+        sealed class ThreadGetCommand : Command
         {
             public override string[] Names
             {
@@ -121,7 +121,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class ThreadListCommand : Command
+        sealed class ThreadListCommand : Command
         {
             public override string[] Names
             {
@@ -166,7 +166,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class ThreadSetCommand : Command
+        sealed class ThreadSetCommand : Command
         {
             public override string[] Names
             {

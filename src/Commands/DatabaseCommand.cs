@@ -22,7 +22,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class DatabaseCommand : MultiCommand
     {
-        private sealed class DatabaseLoadCommand : Command
+        sealed class DatabaseLoadCommand : Command
         {
             public override string[] Names
             {
@@ -45,7 +45,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class DatabaseSaveCommand : Command
+        sealed class DatabaseSaveCommand : Command
         {
             public override string[] Names
             {

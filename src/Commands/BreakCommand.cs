@@ -22,7 +22,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class BreakCommand : MultiCommand
     {
-        private sealed class BreakAddCommand : Command
+        sealed class BreakAddCommand : Command
         {
             public override string[] Names
             {
@@ -45,7 +45,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class BreakClearCommand : Command
+        sealed class BreakClearCommand : Command
         {
             public override string[] Names
             {
@@ -68,7 +68,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class BreakDeleteCommand : Command
+        sealed class BreakDeleteCommand : Command
         {
             public override string[] Names
             {
@@ -91,7 +91,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class BreakListCommand : Command
+        sealed class BreakListCommand : Command
         {
             public override string[] Names
             {

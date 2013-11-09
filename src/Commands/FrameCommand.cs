@@ -25,7 +25,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class FrameCommand : MultiCommand
     {
-        private sealed class FrameArgumentsCommand : Command
+        sealed class FrameArgumentsCommand : Command
         {
             public override string[] Names
             {
@@ -73,7 +73,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class FrameDownCommand : Command
+        sealed class FrameDownCommand : Command
         {
             public override string[] Names
             {
@@ -128,7 +128,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class FrameGetCommand : Command
+        sealed class FrameGetCommand : Command
         {
             public override string[] Names
             {
@@ -165,7 +165,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class FrameLocalsCommand : Command
+        sealed class FrameLocalsCommand : Command
         {
             public override string[] Names
             {
@@ -212,7 +212,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class FrameSetCommand : Command
+        sealed class FrameSetCommand : Command
         {
             public override string[] Names
             {
@@ -273,7 +273,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class FrameUpCommand : Command
+        sealed class FrameUpCommand : Command
         {
             public override string[] Names
             {

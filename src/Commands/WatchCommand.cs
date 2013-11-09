@@ -23,7 +23,7 @@ namespace Mono.Debugger.Client.Commands
 {
     sealed class WatchCommand : MultiCommand
     {
-        private sealed class WatchAddCommand : Command
+        sealed class WatchAddCommand : Command
         {
             public override string[] Names
             {
@@ -50,7 +50,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class WatchClearCommand : Command
+        sealed class WatchClearCommand : Command
         {
             public override string[] Names
             {
@@ -75,7 +75,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class WatchDeleteCommand : Command
+        sealed class WatchDeleteCommand : Command
         {
             public override string[] Names
             {
@@ -116,7 +116,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        private sealed class WatchListCommand : Command
+        sealed class WatchListCommand : Command
         {
             public override string[] Names
             {

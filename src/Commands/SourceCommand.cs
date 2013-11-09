@@ -109,7 +109,7 @@ namespace Mono.Debugger.Client.Commands
                     var i = line - cur;
                     var j = cur - line;
 
-                    if (i > 0 && i < lower + 2 || j > 0 && j < upper + 1)
+                    if (i > 0 && i < lower + 2 || j >= 0 && j < upper)
                     {
                         if (cur == line - 1)
                             Log.Emphasis(str);

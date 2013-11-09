@@ -336,6 +336,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<FrameLocalsCommand>();
             AddCommand<FrameSetCommand>();
             AddCommand<FrameUpCommand>();
+
+            Forward<FrameGetCommand>();
         }
 
         public override string[] Names

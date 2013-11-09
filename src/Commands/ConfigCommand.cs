@@ -203,6 +203,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<ConfigListCommand>();
             AddCommand<ConfigResetCommand>();
             AddCommand<ConfigSetCommand>();
+
+            Forward<ConfigListCommand>();
         }
 
         public override string[] Names

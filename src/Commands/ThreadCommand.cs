@@ -226,6 +226,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<ThreadGetCommand>();
             AddCommand<ThreadListCommand>();
             AddCommand<ThreadSetCommand>();
+
+            Forward<ThreadGetCommand>();
         }
 
         public override string[] Names

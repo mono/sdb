@@ -220,6 +220,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<EnvironmentInheritCommand>();
             AddCommand<EnvironmentListCommand>();
             AddCommand<EnvironmentSetCommand>();
+
+            Forward<EnvironmentListCommand>();
         }
 
         public override string[] Names

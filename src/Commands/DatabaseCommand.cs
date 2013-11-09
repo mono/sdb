@@ -81,7 +81,7 @@ namespace Mono.Debugger.Client.Commands
 
         public override string Summary
         {
-            get { return "Store and load breakpoints/catchpoints/watchpoints."; }
+            get { return "Store and load debugger configuration."; }
         }
     }
 }

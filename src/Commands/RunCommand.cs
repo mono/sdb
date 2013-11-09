@@ -47,6 +47,18 @@ namespace Mono.Debugger.Client.Commands
                 return;
             }
 
+            if (args.Length == 0)
+            {
+                Log.Error("No program path given");
+                return;
+            }
+
+            if (!File.Exists(args))
+            {
+                Log.Error("Program executable '{0}' does not exist", args);
+                return;
+            }
+
             FileInfo file;
 
             try

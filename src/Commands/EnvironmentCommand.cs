@@ -162,6 +162,12 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
+                if (Debugger.EnvironmentVariables.Count == 0)
+                {
+                    Log.Info("No environment variables");
+                    return;
+                }
+
                 foreach (var pair in Debugger.EnvironmentVariables)
                     Log.Info("'{0}' = '{1}'", pair.Key, pair.Value);
             }

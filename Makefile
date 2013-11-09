@@ -110,8 +110,7 @@ bin/sdb.exe: $(srcs) $(addprefix bin/, $(refs)) mono.snk
 
 bin/sdb: sdb.in
 	$(MKDIR) -p bin
-	$(CP) $< $@
-	$(SED) -i s/__MONO_OPTIONS__/$(mono_opt)/ $@
+	$(SED) s/__MONO_OPTIONS__/$(mono_opt)/ $< > $@
 
 bin/COPYING: COPYING
 	$(MKDIR) -p bin

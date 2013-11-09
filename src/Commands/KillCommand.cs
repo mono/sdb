@@ -24,7 +24,7 @@ namespace Mono.Debugger.Client.Commands
     {
         public override string[] Names
         {
-            get { return new[] { "kill", "stop" }; }
+            get { return new[] { "kill" }; }
         }
 
         public override string Summary

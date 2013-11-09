@@ -158,11 +158,6 @@ will want to set it to something like `C:\Program Files (x86)\Mono-3.0.10`.
 Or if you have Mono in some other directory, you might set it to e.g.
 `/opt/mono`.
 
-Another important element is `FirstChanceExceptions`. SDB sets it to `true` by
-default, but chances are that anything you debug will throw some harmless
-exceptions that you don't care about. So, you might want to set it to `false`
-and use explicit catchpoints instead.
-
 You may want to set `DisableColors` to `true` if you don't want the fancy ANSI
 color codes that SDB emits.
 

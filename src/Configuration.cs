@@ -45,8 +45,6 @@ namespace Mono.Debugger.Client
 
         public int EvaluationTimeout { get; set; }
 
-        public bool FirstChanceExceptions { get; set; }
-
         public bool FlattenHierarchy { get; set; }
 
         public bool HexadecimalIntegers { get; set; }
@@ -132,7 +130,6 @@ namespace Mono.Debugger.Client
             Current.EllipsizeStrings = true;
             Current.EllipsizeThreshold = 100;
             Current.EvaluationTimeout = 1000;
-            Current.FirstChanceExceptions = true;
             Current.FlattenHierarchy = true;
             Current.InputPrompt = "(sdb)";
             Current.MemberEvaluationTimeout = 5000;

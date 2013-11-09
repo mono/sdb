@@ -1,4 +1,5 @@
 CD ?= cd
+CHMOD ?= chmod
 CP ?= cp
 MCS ?= mcs
 MKDIR ?= mkdir
@@ -111,6 +112,7 @@ bin/sdb.exe: $(srcs) $(addprefix bin/, $(refs)) mono.snk
 bin/sdb: sdb.in
 	$(MKDIR) -p bin
 	$(SED) s/__MONO_OPTIONS__/$(mono_opt)/ $< > $@
+	$(CHMOD) +x $@
 
 bin/COPYING: COPYING
 	$(MKDIR) -p bin

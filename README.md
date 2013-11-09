@@ -33,6 +33,7 @@ The following variables can be set in your environment or on the Make command
 line to affect the build:
 
     * `CD`: Path to the `cd` POSIX utility.
+    * `CHMOD`: Path to the `chmod` POSIX utility.
     * `CP`: Path to the `cp` POSIX utility.
     * `MCS`: Which MCS executable to use.
     * `MCS_FLAGS`: Flags to pass to MCS.

@@ -42,7 +42,7 @@ clean:
 	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) /target:Clean
 
 $(addprefix bin/, $(refs)):
-	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS)
+	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) debugger-libs.sln
 	$(MKDIR) -p bin
 	$(CP) dep/nrefactory/bin/Debug/ICSharpCode.NRefactory.dll \
 		bin/ICSharpCode.NRefactory.dll

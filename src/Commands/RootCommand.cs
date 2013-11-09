@@ -25,8 +25,10 @@ namespace Mono.Debugger.Client.Commands
         public RootCommand()
         {
             AddCommand<AttachCommand>();
+            AddCommandWithName<BreakCommand>("b");
             AddCommand<BacktraceCommand>();
             AddCommand<BreakCommand>();
+            AddCommandWithName<ContinueCommand>("c");
             AddCommand<CatchCommand>();
             AddCommand<ConfigCommand>();
             AddCommand<ConnectCommand>();
@@ -41,10 +43,13 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<KillCommand>();
             AddCommand<ListenCommand>();
             AddCommand<PluginCommand>();
+            AddCommandWithName<PrintCommand>("p");
             AddCommand<PrintCommand>();
             AddCommand<QuitCommand>();
             AddCommand<ResetCommand>();
+            AddCommandWithName<RunCommand>("r");
             AddCommand<RunCommand>();
+            AddCommandWithName<StepCommand>("s");
             AddCommand<SourceCommand>();
             AddCommand<StepCommand>();
             AddCommand<ThreadCommand>();

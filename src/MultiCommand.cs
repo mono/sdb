@@ -24,6 +24,10 @@ namespace Mono.Debugger.Client
 {
     public abstract class MultiCommand : Command
     {
+        readonly Dictionary<Type, Command> _instantiations = new Dictionary<Type, Command>();
+
+        readonly List<Tuple<string, Command>> _allCommands = new List<Tuple<string, Command>>();
+
         readonly List<Tuple<string, Command>> _commands = new List<Tuple<string, Command>>();
 
         public IEnumerable<Tuple<string, Command>> Commands
@@ -47,23 +51,56 @@ namespace Mono.Debugger.Client
             }
         }
 
+        Command Instantiate(Type type)
+        {
+            Command cmd;
+
+            if (!_instantiations.TryGetValue(type, out cmd))
+            {
+                cmd = (Command)Activator.CreateInstance(type);
+
+                _instantiations.Add(type, cmd);
+            }
+
+            return cmd;
+        }
+
         protected void AddCommand(Command command)
         {
             foreach (var name in command.Names)
-                _commands.Add(Tuple.Create(name, command));
+            {
+                var tup = Tuple.Create(name, command);
+
+                _allCommands.Add(tup);
+                _commands.Add(tup);
+            }
         }
 
         protected void AddCommand(Type type)
         {
-            var cmd = (Command)Activator.CreateInstance(type);
-
-            AddCommand(cmd);
+            AddCommand(Instantiate(type));
         }
 
         protected void AddCommand<T>()
             where T : Command
         {
             AddCommand(typeof(T));
+        }
+
+        protected void AddCommandWithName(Command command, string name)
+        {
+            _allCommands.Add(Tuple.Create(name, command));
+        }
+
+        protected void AddCommandWithName(Type type, string name)
+        {
+            AddCommandWithName(Instantiate(type), name);
+        }
+
+        protected void AddCommandWithName<T>(string name)
+            where T : Command
+        {
+            AddCommandWithName(typeof(T), name);
         }
 
         public override sealed void Process(string args)
@@ -73,7 +110,7 @@ namespace Mono.Debugger.Client
 
             if (name != null)
             {
-                foreach (var cmd in _commands)
+                foreach (var cmd in _allCommands)
                 {
                     if (cmd.Item1.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
                     {

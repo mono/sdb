@@ -97,27 +97,34 @@ namespace Mono.Debugger.Client.Commands
                     return;
                 }
 
-                if (File.GetLastWriteTime(file) > Debugger.CurrentExecutable.LastWriteTime)
-                    Log.Notice("Source file '{0}' is newer than the debuggee executable", file);
-
-                var cur = 0;
-
-                while (!reader.EndOfStream)
+                try
                 {
-                    var str = reader.ReadLine();
+                    if (File.GetLastWriteTime(file) > Debugger.CurrentExecutable.LastWriteTime)
+                        Log.Notice("Source file '{0}' is newer than the debuggee executable", file);
 
-                    var i = line - cur;
-                    var j = cur - line;
+                    var cur = 0;
 
-                    if (i > 0 && i < lower + 2 || j >= 0 && j < upper)
+                    while (!reader.EndOfStream)
                     {
-                        if (cur == line - 1)
-                            Log.Emphasis(str);
-                        else
-                            Log.Info(str);
-                    }
+                        var str = reader.ReadLine();
 
-                    cur++;
+                        var i = line - cur;
+                        var j = cur - line;
+
+                        if (i > 0 && i < lower + 2 || j >= 0 && j < upper)
+                        {
+                            if (cur == line - 1)
+                                Log.Emphasis(str);
+                            else
+                                Log.Info(str);
+                        }
+
+                        cur++;
+                    }
+                }
+                finally
+                {
+                    reader.Dispose();
                 }
             }
             else

@@ -218,3 +218,5 @@ and put in `~/.sdb` (or some other directory specified `SDB_PATH`).
   be separated from ILSpy for this to be practical.
 * The exit code of inferior processes is not shown. There is apparently no way
   to get it from Mono.Debugging.
+* Attach support is not implemented. This requires special support in the
+  debugging libraries.

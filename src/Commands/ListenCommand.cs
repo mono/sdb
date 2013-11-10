@@ -80,6 +80,8 @@ namespace Mono.Debugger.Client.Commands
             }
 
             Debugger.Listen(addr, port);
+
+            Log.Info("Listening on '{0}:{1}'...", addr, port);
         }
     }
 }

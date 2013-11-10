@@ -79,6 +79,8 @@ namespace Mono.Debugger.Client.Commands
                 return;
             }
 
+            Log.Info("Connecting to '{0}:{1}'...", addr, port);
+
             Debugger.Connect(addr, port);
         }
     }

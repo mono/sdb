@@ -254,7 +254,13 @@ namespace Mono.Debugger.Client
                     if (fbp != null)
                         Log.Notice("Hit method breakpoint on '{0}'", fbp.FunctionName);
                     else
-                        Log.Notice("Hit breakpoint at line '{0}' of '{1}'", bp.Line, bp.FileName);
+                    {
+                        var cond = bp.ConditionExpression != null ?
+                                   string.Format(" (condition '{0}' met)", bp.ConditionExpression) :
+                                   string.Empty;
+
+                        Log.Notice("Hit breakpoint at '{0}:{1}'{2}", bp.FileName, bp.Line, cond);
+                    }
 
                     Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
 

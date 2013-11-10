@@ -87,18 +87,24 @@ Running a program is simple:
     Inferior process '5234' ('test.exe') started
     Foo!
     Inferior process '5234' ('test.exe') suspended
+    #0 [0x00000001] Program.Bar at /home/alexrp/Projects/tests/cs/test.cs:22
+            Debugger.Break();
 
 A stack trace can be generated with `bt`:
 
     (sdb) bt
     #0 [0x00000001] Program.Bar at /home/alexrp/Projects/tests/cs/test.cs:22
+            Debugger.Break();
     #1 [0x00000007] Program.Foo at /home/alexrp/Projects/tests/cs/test.cs:17
+            Bar();
     #2 [0x00000008] Program.Main at /home/alexrp/Projects/tests/cs/test.cs:10
+            Foo(str);
 
 We can select a frame and inspect locals:
 
     (sdb) f up
     #1 [0x00000007] Program.Foo at /home/alexrp/Projects/tests/cs/test.cs:17
+            Bar();
     (sdb) p str
     string it = "Foo!"
 
@@ -109,7 +115,7 @@ Or globals:
 
 To continue execution, do:
 
-    (sdb) cont
+    (sdb) c
     Inferior process '5234' ('test.exe') resumed
     Inferior process '5234' ('test.exe') exited
     (sdb)

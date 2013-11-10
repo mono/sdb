@@ -70,6 +70,8 @@ namespace Mono.Debugger.Client.Commands
                 }
 
                 Debugger.Read(file);
+
+                Log.Info("Debugger state initialized from '{0}'", args);
             }
         }
 
@@ -113,6 +115,8 @@ namespace Mono.Debugger.Client.Commands
                 }
 
                 Debugger.Write(file);
+
+                Log.Info("Debugger state saved to '{0}'", args);
             }
         }
 

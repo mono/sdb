@@ -52,20 +52,9 @@ namespace Mono.Debugger.Client.Commands
                 if (mcmd == null)
                     break;
 
-                var found = false;
+                var scmd = mcmd.GetCommand(name);
 
-                foreach (var c in mcmd.Commands)
-                {
-                    if (c.Item1.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        cmd = c.Item2;
-                        found = true;
-
-                        break;
-                    }
-                }
-
-                if (!found)
+                if (scmd == null)
                 {
                     if (cmd is RootCommand)
                         Log.Error("'{0}' is not a known command", name);
@@ -76,6 +65,8 @@ namespace Mono.Debugger.Client.Commands
                 }
                 else
                 {
+                    cmd = scmd;
+
                     if (fullName != string.Empty)
                         fullName += ' ';
 

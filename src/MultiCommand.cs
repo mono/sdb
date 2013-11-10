@@ -110,26 +110,28 @@ namespace Mono.Debugger.Client
             _forwardTarget = Instantiate(typeof(T));
         }
 
+        public Command GetCommand(string name)
+        {
+            foreach (var cmd in _allCommands)
+                if (cmd.Item1.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+                    return cmd.Item2;
+
+            return null;
+        }
+
         public override sealed void Process(string args)
         {
             var name = args.Split(' ').Where(x => x != string.Empty).FirstOrDefault();
-            var found = false;
 
             if (name != null)
             {
-                foreach (var cmd in _allCommands)
+                var cmd = GetCommand(name);
+
+                if (cmd != null)
                 {
-                    if (cmd.Item1.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        cmd.Item2.Process(new string(args.Skip(name.Length).ToArray()).Trim());
-                        found = true;
-
-                        break;
-                    }
-                }
-
-                if (found)
+                    cmd.Process(new string(args.Skip(name.Length).ToArray()).Trim());
                     return;
+                }
             }
 
             ProcessFallback(args, name != null);

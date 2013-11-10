@@ -99,7 +99,9 @@ namespace Mono.Debugger.Client.Commands
 
                 try
                 {
-                    if (File.GetLastWriteTime(file) > Debugger.CurrentExecutable.LastWriteTime)
+                    var exec = Debugger.CurrentExecutable;
+
+                    if (exec != null && File.GetLastWriteTime(file) > exec.LastWriteTime)
                         Log.Notice("Source file '{0}' is newer than the debuggee executable", file);
 
                     var cur = 0;

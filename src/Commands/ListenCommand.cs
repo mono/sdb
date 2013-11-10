@@ -17,6 +17,8 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace Mono.Debugger.Client.Commands
 {
@@ -34,12 +36,50 @@ namespace Mono.Debugger.Client.Commands
 
         public override string Syntax
         {
-            get { return "listen|wait <name> <addr> <dbg-port> <out-port>"; }
+            get { return "listen|wait <addr> <port>"; }
         }
 
         public override void Process(string args)
         {
-            Log.Error("Listen support is not yet implemented.");
+            if (Debugger.State != State.Exited)
+            {
+                Log.Error("An inferior process is already being debugged");
+                return;
+            }
+
+            var ip = args.Split(' ').Where(x => x != string.Empty).FirstOrDefault();
+
+            if (ip == null)
+            {
+                Log.Error("No IP address given");
+                return;
+            }
+
+            IPAddress addr;
+
+            if (!IPAddress.TryParse(ip, out addr))
+            {
+                Log.Error("Invalid IP address");
+                return;
+            }
+
+            var rest = new string(args.Skip(ip.Length).ToArray()).Trim();
+
+            if (rest.Length == 0)
+            {
+                Log.Error("No port number given");
+                return;
+            }
+
+            int port;
+
+            if (!int.TryParse(rest, out port) || port <= 0)
+            {
+                Log.Error("Invalid port number");
+                return;
+            }
+
+            Debugger.Listen(addr, port);
         }
     }
 }

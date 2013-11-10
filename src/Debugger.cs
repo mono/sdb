@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using Mono.Debugging.Client;
 using Mono.Debugging.Soft;
 
@@ -46,6 +47,10 @@ namespace Mono.Debugger.Client
         public static SoftDebuggerSession Session { get; private set; }
 
         public static FileInfo CurrentExecutable { get; private set; }
+
+        public static IPAddress CurrentAddress { get; private set; }
+
+        public static int CurrentPort { get; private set; }
 
         public static DebuggerSessionOptions Options { get; private set; }
 
@@ -147,6 +152,17 @@ namespace Mono.Debugger.Client
             }
         }
 
+        static string StringizeTarget()
+        {
+            if (CurrentExecutable != null)
+                return CurrentExecutable.Name;
+
+            if (CurrentAddress != null)
+                return string.Format("{0}:{1}", CurrentAddress, CurrentPort);
+
+            return "<none>";
+        }
+
         static void EnsureCreated()
         {
             lock (_lock)
@@ -196,7 +212,7 @@ namespace Mono.Debugger.Client
 
                     if (_showResumeMessage)
                         Log.Notice("Inferior process '{0}' ('{1}') resumed",
-                                   ActiveProcess.Id, CurrentExecutable.Name);
+                                   ActiveProcess.Id, StringizeTarget());
                 };
 
                 Session.TargetReady += (sender, e) =>
@@ -205,13 +221,13 @@ namespace Mono.Debugger.Client
                     _activeProcess = Session.GetProcesses().SingleOrDefault();
 
                     Log.Notice("Inferior process '{0}' ('{1}') started",
-                               ActiveProcess.Id, CurrentExecutable.Name);
+                               ActiveProcess.Id, StringizeTarget());
                 };
 
                 Session.TargetStopped += (sender, e) =>
                 {
                     Log.Notice("Inferior process '{0}' ('{1}') suspended",
-                               ActiveProcess.Id, CurrentExecutable.Name);
+                               ActiveProcess.Id, StringizeTarget());
                     Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
 
                     CommandLine.ResumeEvent.Set();
@@ -220,7 +236,7 @@ namespace Mono.Debugger.Client
                 Session.TargetInterrupted += (sender, e) =>
                 {
                     Log.Notice("Inferior process '{0}' ('{1}') interrupted",
-                               ActiveProcess.Id, CurrentExecutable.Name);
+                               ActiveProcess.Id, StringizeTarget());
                     Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
 
                     CommandLine.ResumeEvent.Set();
@@ -235,8 +251,13 @@ namespace Mono.Debugger.Client
 
                 Session.TargetExited += (sender, e) =>
                 {
-                    Log.Notice("Inferior process '{0}' ('{1}') exited",
-                               ActiveProcess.Id, CurrentExecutable.Name);
+                    var p = ActiveProcess;
+
+                    // Can happen when a remote connection attempt fails.
+                    if (p != null)
+                        Log.Notice("Inferior process '{0}' ('{1}') exited", ActiveProcess.Id, StringizeTarget());
+                    else
+                        Log.Notice("Failed to connect to '{0}'", StringizeTarget());
 
                     // Make sure we clean everything up on a normal exit.
                     Kill();
@@ -288,6 +309,12 @@ namespace Mono.Debugger.Client
             {
                 EnsureCreated();
 
+                CurrentExecutable = file;
+                CurrentAddress = null;
+                CurrentPort = -1;
+
+                _showResumeMessage = false;
+
                 var info = new SoftDebuggerStartInfo(Configuration.Current.RuntimePrefix,
                                                      EnvironmentVariables)
                 {
@@ -296,10 +323,47 @@ namespace Mono.Debugger.Client
                     WorkingDirectory = WorkingDirectory
                 };
 
-                CurrentExecutable = file;
+                Session.Run(info, Options);
+
+                CommandLine.InferiorExecuting = true;
+            }
+        }
+
+        public static void Connect(IPAddress address, int port)
+        {
+            lock (_lock)
+            {
+                EnsureCreated();
+
+                CurrentExecutable = null;
+                CurrentAddress = address;
+                CurrentPort = port;
+
                 _showResumeMessage = false;
 
-                Session.Run(info, Options);
+                var args = new SoftDebuggerConnectArgs(string.Empty, address, port);
+
+                Session.Run(new SoftDebuggerStartInfo(args), Options);
+
+                CommandLine.InferiorExecuting = true;
+            }
+        }
+
+        public static void Listen(IPAddress address, int port)
+        {
+            lock (_lock)
+            {
+                EnsureCreated();
+
+                CurrentExecutable = null;
+                CurrentAddress = address;
+                CurrentPort = port;
+
+                _showResumeMessage = false;
+
+                var args = new SoftDebuggerListenArgs(string.Empty, address, port);
+
+                Session.Run(new SoftDebuggerStartInfo(args), Options);
 
                 CommandLine.InferiorExecuting = true;
             }

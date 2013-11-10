@@ -277,3 +277,7 @@ For the boring details, see the `COPYING` file.
   to get it from Mono.Debugging.
 * Attach support is not implemented. This requires special support in the
   debugging libraries.
+* Some Mono versions throw a `NullReferenceException` when SDB shuts down. This
+  is because of a bug in the finalizer of `System.Timers.Timer` in Mono. This
+  bug has been fixed and should be available in whatever Mono version comes
+  after 3.2.5.

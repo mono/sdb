@@ -264,14 +264,12 @@ namespace Mono.Debugger.Client.Commands
                 if (expr.Length == 0)
                 {
                     bp.ConditionExpression = null;
-                    bp.BreakIfConditionChanges = false;
 
                     Log.Info("Condition for breakpoint '{0}' unset{1}", num, was);
                 }
                 else
                 {
                     bp.ConditionExpression = expr;
-                    bp.BreakIfConditionChanges = true;
 
                     Log.Info("Condition for breakpoint '{0}' set to '{1}'{2}", num, expr, was);
                 }

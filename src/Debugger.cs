@@ -35,12 +35,6 @@ namespace Mono.Debugger.Client
             EnsureCreated();
             Reset();
 
-            // Have to special case this initalization
-            // during startup, since `Session` and
-            // `BreakEvents` initially depend on each
-            // other.
-            Session.Breakpoints = BreakEvents;
-
             DebuggerLoggingService.CustomLogger = new CustomLogger();
         }
 

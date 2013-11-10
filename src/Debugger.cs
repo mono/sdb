@@ -18,9 +18,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using Mono.Debugging.Client;
 using Mono.Debugging.Soft;
 
@@ -512,6 +514,89 @@ namespace Mono.Debugger.Client
             // Make sure breakpoints/catchpoints take effect.
             if (Session != null)
                 Session.Breakpoints = BreakEvents;
+        }
+
+        [Serializable]
+        sealed class DebuggerState
+        {
+            public string WorkingDirectory { get; set; }
+
+            public string Arguments { get; set; }
+
+            public Dictionary<string, string> EnvironmentVariables { get; set; }
+
+            public SortedDictionary<long, string> Watchpoints { get; set; }
+
+            public long NextWatchId { get; set; }
+
+            public Dictionary<long, Tuple<BreakEvent, bool>> Breakpoints { get; set; }
+
+            public long NextBreakpointId { get; set; }
+
+            public ReadOnlyCollection<Catchpoint> Catchpoints { get; set; }
+        }
+
+        public static void Write(FileInfo file)
+        {
+            var state = new DebuggerState
+            {
+                WorkingDirectory = WorkingDirectory,
+                Arguments = Arguments,
+                EnvironmentVariables = EnvironmentVariables,
+                Watchpoints = Watchpoints,
+                NextWatchId = _nextWatchId,
+                Breakpoints = Breakpoints.Select(x => Tuple.Create(x.Key, x.Value, BreakEvents.Contains(x.Value)))
+                                         .ToDictionary(x => x.Item1, x => Tuple.Create(x.Item2, x.Item3)),
+                NextBreakpointId = _nextBreakpointId,
+                Catchpoints = BreakEvents.GetCatchpoints()
+            };
+
+            try
+            {
+                using (var stream = file.Open(FileMode.Create, FileAccess.Write))
+                    new BinaryFormatter().Serialize(stream, state);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Could not write database file '{0}':", file);
+                Log.Error(ex.ToString());
+            }
+        }
+
+        public static void Read(FileInfo file)
+        {
+            DebuggerState state;
+
+            try
+            {
+                using (var stream = file.Open(FileMode.Open, FileAccess.Read))
+                    state = (DebuggerState)new BinaryFormatter().Deserialize(stream);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Could not read database file '{0}':", file);
+                Log.Error(ex.ToString());
+
+                return;
+            }
+
+            Reset();
+
+            WorkingDirectory = state.WorkingDirectory;
+            Arguments = state.Arguments;
+            EnvironmentVariables = state.EnvironmentVariables;
+            Watchpoints = state.Watchpoints;
+
+            foreach (var kvp in state.Breakpoints)
+            {
+                Breakpoints.Add(kvp.Key, kvp.Value.Item1);
+
+                if (kvp.Value.Item2)
+                    BreakEvents.Add(kvp.Value.Item1);
+            }
+
+            foreach (var cp in state.Catchpoints)
+                BreakEvents.Add(cp);
         }
     }
 }

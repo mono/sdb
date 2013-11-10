@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Mono.Debugger.Client.Commands
 {
@@ -36,12 +38,38 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Syntax
             {
-                get { return "database|db load|read"; }
+                get { return "database|db load|read <file>"; }
             }
 
             public override void Process(string args)
             {
-                Log.Error("Database support is not yet implemented.");
+                if (args.Length == 0)
+                {
+                    Log.Error("No file path given");
+                    return;
+                }
+
+                if (!File.Exists(args))
+                {
+                    Log.Error("File '{0}' does not exist", args);
+                    return;
+                }
+
+                FileInfo file;
+
+                try
+                {
+                    file = new FileInfo(args);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Could not open file '{0}':", args);
+                    Log.Error(ex.ToString());
+
+                    return;
+                }
+
+                Debugger.Read(file);
             }
         }
 
@@ -59,12 +87,32 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Syntax
             {
-                get { return "database|db save|write"; }
+                get { return "database|db save|write <file>"; }
             }
 
             public override void Process(string args)
             {
-                Log.Error("Database support is not yet implemented.");
+                if (args.Length == 0)
+                {
+                    Log.Error("No file path given");
+                    return;
+                }
+
+                FileInfo file;
+
+                try
+                {
+                    file = new FileInfo(args);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Could not open file '{0}':", args);
+                    Log.Error(ex.ToString());
+
+                    return;
+                }
+
+                Debugger.Write(file);
             }
         }
 

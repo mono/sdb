@@ -27,6 +27,7 @@ You could, for example, just add the `bin` directory to your `PATH`:
     $ sdb
     Welcome to the Mono soft debugger (sdb 1.0.5058.39468)
     Type 'help' for a list of commands or 'quit' to exit
+
     (sdb)
 
 The following variables can be set in your environment or on the Make command
@@ -82,7 +83,7 @@ Running a program is simple:
     Welcome to the Mono soft debugger (sdb 1.0.5060.15368)
     Type 'help' for a list of commands or 'quit' to exit
 
-    (sdb) exec test.exe
+    (sdb) r test.exe
     Inferior process '5234' ('test.exe') started
     Foo!
     Inferior process '5234' ('test.exe') suspended
@@ -98,12 +99,12 @@ We can select a frame and inspect locals:
 
     (sdb) f up
     #1 [0x00000007] Program.Foo at /home/alexrp/Projects/tests/cs/test.cs:17
-    (sdb) eval str
+    (sdb) p str
     string it = "Foo!"
 
 Or globals:
 
-    (sdb) eval Environment.CommandLine
+    (sdb) p Environment.CommandLine
     string it = "/home/alexrp/Projects/tests/cs/test.exe"
 
 To continue execution, do:
@@ -245,7 +246,7 @@ Here's an example of compiling and using a test plugin:
     Welcome to the Mono soft debugger (sdb 1.0.5061.14716)
     Type 'help' for a list of commands or 'quit' to exit
 
-    (sdb) help mycmd
+    (sdb) h mycmd
 
       mycmd
 
@@ -271,10 +272,10 @@ For the boring details, see the `COPYING` file.
   Ctrl-D works fine for exiting SDB, regardless.
 * There is no completion for commands - the default completion instead tries to
   complete file names which is not very useful most of the time.
-* Decompilation is not implemented. The ICSharpCode.Decompiler library needs to
-  be separated from ILSpy for this to be practical.
+* Decompilation is not implemented. The `ICSharpCode.Decompiler` library needs
+  to be separated from ILSpy for this to be practical.
 * The exit code of inferior processes is not shown. There is apparently no way
-  to get it from Mono.Debugging.
+  to get it from `Mono.Debugging`.
 * Attach support is not implemented. This requires special support in the
   debugging libraries.
 * Some Mono versions throw a `NullReferenceException` when SDB shuts down. This

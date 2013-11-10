@@ -35,7 +35,8 @@ namespace Mono.Debugger.Client
         static Debugger()
         {
             EnsureCreated();
-            Reset();
+            ResetOptions();
+            ResetState();
 
             DebuggerLoggingService.CustomLogger = new CustomLogger();
         }
@@ -495,14 +496,10 @@ namespace Mono.Debugger.Client
             return _nextBreakpointId++;
         }
 
-        public static void Reset()
+        public static void ResetState()
         {
             // No need to lock on this data.
 
-            Options = new DebuggerSessionOptions
-            {
-                EvaluationOptions = EvaluationOptions.DefaultOptions
-            };
             WorkingDirectory = Environment.CurrentDirectory;
             Arguments = string.Empty;
             EnvironmentVariables = new Dictionary<string, string>();
@@ -514,6 +511,16 @@ namespace Mono.Debugger.Client
             // Make sure breakpoints/catchpoints take effect.
             if (Session != null)
                 Session.Breakpoints = BreakEvents;
+        }
+
+        public static void ResetOptions()
+        {
+            // No need to lock on this data.
+
+            Options = new DebuggerSessionOptions
+            {
+                EvaluationOptions = EvaluationOptions.DefaultOptions
+            };
         }
 
         [Serializable]
@@ -580,7 +587,7 @@ namespace Mono.Debugger.Client
                 return;
             }
 
-            Reset();
+            ResetState();
 
             WorkingDirectory = state.WorkingDirectory;
             Arguments = state.Arguments;

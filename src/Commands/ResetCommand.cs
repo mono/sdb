@@ -39,7 +39,9 @@ namespace Mono.Debugger.Client.Commands
 
         public override void Process(string args)
         {
-            Debugger.Reset();
+            Debugger.ResetState();
+            Debugger.ResetOptions();
+
             Configuration.Apply();
 
             Log.Info("All debugger state reset");

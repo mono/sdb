@@ -83,6 +83,12 @@ namespace Mono.Debugger.Client.Commands
 
             if (file != null && line != -1)
             {
+                if (!File.Exists(file))
+                {
+                    Log.Error("Source file '{0}' not found", file);
+                    return;
+                }
+
                 StreamReader reader;
 
                 try

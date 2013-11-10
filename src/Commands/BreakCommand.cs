@@ -16,14 +16,153 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Mono.Debugging.Client;
 
 namespace Mono.Debugger.Client.Commands
 {
     sealed class BreakCommand : MultiCommand
     {
-        sealed class BreakAddCommand : Command
+        sealed class BreakAddCommand : MultiCommand
         {
+            sealed class BreakAddLocationCommand : Command
+            {
+                public override string[] Names
+                {
+                    get { return new[] { "location", "at" }; }
+                }
+
+                public override string Summary
+                {
+                    get { return "Add a breakpoint at a source location."; }
+                }
+
+                public override string Syntax
+                {
+                    get { return "break|bp add location <file> <line>"; }
+                }
+
+                public override void Process(string args)
+                {
+                    var splitArgs = args.Split(' ').Where(x => x != string.Empty);
+                    var count = splitArgs.Count();
+
+                    if (count == 0)
+                    {
+                        Log.Error("No file name given");
+                        return;
+                    }
+
+                    if (count == 1)
+                    {
+                        Log.Error("No line number given");
+                        return;
+                    }
+
+                    var lineStr = splitArgs.Last();
+
+                    int line;
+
+                    if (!int.TryParse(lineStr, out line))
+                    {
+                        Log.Error("Invalid line number");
+                        return;
+                    }
+
+                    var file = new string(args.Take(args.Length - lineStr.Length).ToArray()).Trim();
+
+                    try
+                    {
+                        file = Path.GetFullPath(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Info("Could not compute absolute path of '{0}':");
+                        Log.Info(ex.ToString());
+
+                        return;
+                    }
+
+                    foreach (var be in Debugger.Breakpoints)
+                    {
+                        var bp = be.Value as Breakpoint;
+
+                        if (bp == null)
+                            continue;
+
+                        if (bp.FileName == file && bp.Line == line)
+                        {
+                            Log.Error("A breakpoint at '{0}:{1}' already exists ('{2}')", file, line, be.Key);
+                            return;
+                        }
+                    }
+
+                    var id = Debugger.GetBreakpointId();
+
+                    Debugger.Breakpoints.Add(id, Debugger.BreakEvents.Add(file, line));
+
+                    Log.Info("Breakpoint '{0}' added at '{1}:{2}'", id, file, line);
+                }
+            }
+
+            sealed class BreakAddMethodCommand : Command
+            {
+                public override string[] Names
+                {
+                    get { return new[] { "method", "function" }; }
+                }
+
+                public override string Summary
+                {
+                    get { return "Add a breakpoint at a method."; }
+                }
+
+                public override string Syntax
+                {
+                    get { return "break|bp add method|function <name>"; }
+                }
+
+                public override void Process(string args)
+                {
+                    if (args.Length == 0)
+                    {
+                        Log.Error("No method name given");
+                        return;
+                    }
+
+                    foreach (var be in Debugger.Breakpoints)
+                    {
+                        if (!(be.Value is FunctionBreakpoint))
+                            continue;
+
+                        if (((FunctionBreakpoint)be.Value).FunctionName == args)
+                        {
+                            Log.Error("A method breakpoint for '{0}' already exists ('{1}')", args, be.Key);
+                            return;
+                        }
+                    }
+
+                    // TODO: Parameter types too.
+
+                    var id = Debugger.GetBreakpointId();
+                    var fbp = new FunctionBreakpoint(args, "C#");
+
+                    Debugger.Breakpoints.Add(id, fbp);
+                    Debugger.BreakEvents.Add(fbp);
+
+                    Log.Info("Breakpoint '{0}' added for method '{1}'", id, args);
+                }
+            }
+
+            public BreakAddCommand()
+            {
+                AddCommand<BreakAddLocationCommand>();
+                AddCommand<BreakAddMethodCommand>();
+            }
+
             public override string[] Names
             {
                 get { return new[] { "add" }; }
@@ -31,17 +170,12 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Summary
             {
-                get { return "Add a breakpoint at a source line."; }
+                get { return "Add a breakpoint at a location or method."; }
             }
 
-            public override string Syntax
+            public override string Parent
             {
-                get { return "break|bp add <file> <line>"; }
-            }
-
-            public override void Process(string args)
-            {
-                Log.Error("Breakpoints are not yet implemented.");
+                get { return "break"; }
             }
         }
 
@@ -64,7 +198,83 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                Log.Error("Breakpoints are not yet implemented.");
+                Debugger.Breakpoints.Clear();
+                Debugger.BreakEvents.ClearBreakpoints();
+
+                Log.Info("All breakpoints cleared");
+            }
+        }
+
+        sealed class BreakConditionCommand : Command
+        {
+            public override string[] Names
+            {
+                get { return new[] { "condition", "expression" }; }
+            }
+
+            public override string Summary
+            {
+                get { return "Set a conditional expression for a breakpoint."; }
+            }
+
+            public override string Syntax
+            {
+                get { return "break|bp condition|expression <id> [expr]"; }
+            }
+
+            public override void Process(string args)
+            {
+                var id = args.Split(' ').Where(x => x != string.Empty).FirstOrDefault();
+
+                if (id == null)
+                {
+                    Log.Error("No breakpoint ID given");
+                    return;
+                }
+
+                long num;
+
+                if (!long.TryParse(id, out num))
+                {
+                    Log.Error("Invalid breakpoint ID");
+                    return;
+                }
+
+                BreakEvent b;
+
+                if (!Debugger.Breakpoints.TryGetValue(num, out b))
+                {
+                    Log.Error("Breakpoint '{0}' not found", num);
+                    return;
+                }
+
+                if (b is FunctionBreakpoint)
+                {
+                    Log.Error("Breakpoint '{0}' is a method breakpoint", num);
+                    return;
+                }
+
+                var expr = new string(args.Skip(id.Length).ToArray()).Trim();
+
+                var bp = (Breakpoint)b;
+                var was = bp.ConditionExpression != null ?
+                          string.Format(" (was '{0}')", bp.ConditionExpression) :
+                          string.Empty;
+
+                if (expr.Length == 0)
+                {
+                    bp.ConditionExpression = null;
+                    bp.BreakIfConditionChanges = false;
+
+                    Log.Info("Condition for breakpoint '{0}' unset{1}", num, was);
+                }
+                else
+                {
+                    bp.ConditionExpression = expr;
+                    bp.BreakIfConditionChanges = true;
+
+                    Log.Info("Condition for breakpoint '{0}' set to '{1}'{2}", num, expr, was);
+                }
             }
         }
 
@@ -87,7 +297,26 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                Log.Error("Breakpoints are not yet implemented.");
+                long num;
+
+                if (!long.TryParse(args, out num))
+                {
+                    Log.Error("Invalid breakpoint ID");
+                    return;
+                }
+
+                BreakEvent b;
+
+                if (!Debugger.Breakpoints.TryGetValue(num, out b))
+                {
+                    Log.Error("Breakpoint '{0}' not found", num);
+                    return;
+                }
+
+                Debugger.Breakpoints.Remove(num);
+                Debugger.BreakEvents.Remove(b);
+
+                Log.Info("Breakpoint '{0}' deleted", num);
             }
         }
 
@@ -110,7 +339,76 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                Log.Error("Breakpoints are not yet implemented.");
+                if (Debugger.Breakpoints.Count == 0)
+                {
+                    Log.Info("No breakpoints");
+                    return;
+                }
+
+                foreach (var pair in Debugger.Breakpoints)
+                {
+                    var bp = pair.Value as Breakpoint;
+                    var fbp = pair.Value as FunctionBreakpoint;
+
+                    var at = fbp != null ? fbp.FunctionName : string.Format("{0}:{1}", bp.FileName, bp.Line);
+                    var expr = bp != null && bp.ConditionExpression != null ?
+                               string.Format(" '{0}'", bp.ConditionExpression) :
+                               string.Empty;
+
+                    // TODO: Parameter types too.
+
+                    Log.Info("#{0} '{1}'{2}", pair.Key, at, expr);
+                }
+            }
+        }
+
+        sealed class BreakToggleCommand : Command
+        {
+            public override string[] Names
+            {
+                get { return new[] { "toggle" }; }
+            }
+
+            public override string Summary
+            {
+                get { return "Toggle a breakpoint on/off."; }
+            }
+
+            public override string Syntax
+            {
+                get { return "break|bp toggle <id>"; }
+            }
+
+            public override void Process(string args)
+            {
+                long num;
+
+                if (!long.TryParse(args, out num))
+                {
+                    Log.Error("Invalid breakpoint ID");
+                    return;
+                }
+
+                BreakEvent b;
+
+                if (!Debugger.Breakpoints.TryGetValue(num, out b))
+                {
+                    Log.Error("Breakpoint '{0}' not found", num);
+                    return;
+                }
+
+                if (Debugger.BreakEvents.Contains(b))
+                {
+                    Debugger.BreakEvents.Remove(b);
+
+                    Log.Info("Breakpoint '{0}' disabled", num);
+                }
+                else
+                {
+                    Debugger.BreakEvents.Add(b);
+
+                    Log.Info("Breakpoint '{0}' enabled", num);
+                }
             }
         }
 
@@ -118,8 +416,10 @@ namespace Mono.Debugger.Client.Commands
         {
             AddCommand<BreakAddCommand>();
             AddCommand<BreakClearCommand>();
+            AddCommand<BreakConditionCommand>();
             AddCommand<BreakDeleteCommand>();
             AddCommand<BreakListCommand>();
+            AddCommand<BreakToggleCommand>();
 
             Forward<BreakListCommand>();
         }

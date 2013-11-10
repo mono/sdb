@@ -62,9 +62,13 @@ namespace Mono.Debugger.Client
 
         public static SortedDictionary<long, string> Watchpoints { get; private set; }
 
+        public static SortedDictionary<long, BreakEvent> Breakpoints { get; private set; }
+
         public static BreakpointStore BreakEvents { get; private set; }
 
         static long _nextWatchId;
+
+        static long _nextBreakpointId;
 
         static volatile bool _showResumeMessage;
 
@@ -244,6 +248,14 @@ namespace Mono.Debugger.Client
 
                 Session.TargetHitBreakpoint += (sender, e) =>
                 {
+                    var bp = e.BreakEvent as Breakpoint;
+                    var fbp = e.BreakEvent as FunctionBreakpoint;
+
+                    if (fbp != null)
+                        Log.Notice("Hit method breakpoint on '{0}'", fbp.FunctionName);
+                    else
+                        Log.Notice("Hit breakpoint at line '{0}' of '{1}'", bp.Line, bp.FileName);
+
                     Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
 
                     CommandLine.ResumeEvent.Set();
@@ -476,6 +488,11 @@ namespace Mono.Debugger.Client
             return _nextWatchId++;
         }
 
+        public static long GetBreakpointId()
+        {
+            return _nextBreakpointId++;
+        }
+
         public static void Reset()
         {
             // No need to lock on this data.
@@ -489,6 +506,7 @@ namespace Mono.Debugger.Client
             EnvironmentVariables = new Dictionary<string, string>();
             Watchpoints = new SortedDictionary<long, string>();
             _nextWatchId = 0;
+            Breakpoints = new SortedDictionary<long, BreakEvent>();
             BreakEvents = new BreakpointStore();
 
             // Make sure breakpoints/catchpoints take effect.

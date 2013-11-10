@@ -336,7 +336,7 @@ namespace Mono.Debugger.Client
                 var info = new SoftDebuggerStartInfo(Configuration.Current.RuntimePrefix,
                                                      EnvironmentVariables)
                 {
-                    Command = file.Name,
+                    Command = file.FullName,
                     Arguments = Arguments,
                     WorkingDirectory = WorkingDirectory
                 };

@@ -80,6 +80,8 @@ namespace Mono.Debugger.Client.Commands
             {
                 AddCommand<StepOverLineCommand>();
                 AddCommand<StepOverInstructionCommand>();
+
+                Forward<StepOverLineCommand>();
             }
 
             public override string[] Names
@@ -156,6 +158,8 @@ namespace Mono.Debugger.Client.Commands
             {
                 AddCommand<StepIntoLineCommand>();
                 AddCommand<StepIntoInstructionCommand>();
+
+                Forward<StepIntoLineCommand>();
             }
 
             public override string[] Names
@@ -206,6 +210,8 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<StepOverCommand>();
             AddCommand<StepIntoCommand>();
             AddCommand<StepOutCommand>();
+
+            Forward<StepOverCommand>();
         }
 
         public override string[] Names

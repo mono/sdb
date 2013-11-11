@@ -140,6 +140,7 @@ namespace Mono.Debugger.Client
             Current.MaxConnectionAttempts = 1;
             Current.MemberEvaluationTimeout = 5000;
             Current.RuntimePrefix = "/usr";
+            Current.StepOverPropertiesAndOperators = true;
         }
 
         public static void Apply()

@@ -28,15 +28,6 @@ GENDARME_FLAGS += --severity all --confidence all
 
 .PHONY: all clean gendarme
 
-override refs = \
-	ICSharpCode.NRefactory.dll \
-	ICSharpCode.NRefactory.CSharp.dll \
-	Mono.Cecil.dll \
-	Mono.Cecil.Mdb.dll \
-	Mono.Debugger.Soft.dll \
-	Mono.Debugging.dll \
-	Mono.Debugging.Soft.dll
-
 all: bin/sdb bin/sdb.exe bin/COPYING bin/README
 
 clean:
@@ -45,6 +36,15 @@ clean:
 
 gendarme: bin/sdb.exe
 	$(GENDARME) $(GENDARME_FLAGS) --log bin/sdb.log $<
+
+override refs = \
+	ICSharpCode.NRefactory.dll \
+	ICSharpCode.NRefactory.CSharp.dll \
+	Mono.Cecil.dll \
+	Mono.Cecil.Mdb.dll \
+	Mono.Debugger.Soft.dll \
+	Mono.Debugging.dll \
+	Mono.Debugging.Soft.dll
 
 $(addprefix bin/, $(refs)):
 	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) debugger-libs.sln

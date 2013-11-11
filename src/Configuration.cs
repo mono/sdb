@@ -35,6 +35,8 @@ namespace Mono.Debugger.Client
 
         public bool ChunkRawStrings { get; set; }
 
+        public int ConnectionAttemptInterval { get; set; }
+
         public bool DebugLogging { get; set; }
 
         public bool DisableColors { get; set; }
@@ -54,6 +56,8 @@ namespace Mono.Debugger.Client
         public bool LogInternalErrors { get; set; }
 
         public bool LogRuntimeSpew { get; set; }
+
+        public int MaxConnectionAttempts { get; set; }
 
         public int MemberEvaluationTimeout { get; set; }
 
@@ -127,11 +131,13 @@ namespace Mono.Debugger.Client
             Current.AllowMethodEvaluation = true;
             Current.AllowTargetInvoke = true;
             Current.AllowToStringCalls = true;
+            Current.ConnectionAttemptInterval = 500;
             Current.EllipsizeStrings = true;
             Current.EllipsizeThreshold = 100;
             Current.EvaluationTimeout = 1000;
             Current.FlattenHierarchy = true;
             Current.InputPrompt = "(sdb)";
+            Current.MaxConnectionAttempts = 1;
             Current.MemberEvaluationTimeout = 5000;
             Current.RuntimePrefix = "/usr";
         }

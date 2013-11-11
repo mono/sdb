@@ -335,7 +335,12 @@ namespace Mono.Debugger.Client
                 {
                     Command = file.FullName,
                     Arguments = Arguments,
-                    WorkingDirectory = WorkingDirectory
+                    WorkingDirectory = WorkingDirectory,
+                    StartArgs =
+                    {
+                        MaxConnectionAttempts = Configuration.Current.MaxConnectionAttempts,
+                        TimeBetweenConnectionAttempts = Configuration.Current.ConnectionAttemptInterval
+                    }
                 };
 
                 Session.Run(info, Options);
@@ -356,7 +361,11 @@ namespace Mono.Debugger.Client
 
                 _showResumeMessage = false;
 
-                var args = new SoftDebuggerConnectArgs(string.Empty, address, port);
+                var args = new SoftDebuggerConnectArgs(string.Empty, address, port)
+                {
+                    MaxConnectionAttempts = Configuration.Current.MaxConnectionAttempts,
+                    TimeBetweenConnectionAttempts = Configuration.Current.ConnectionAttemptInterval
+                };
 
                 Session.Run(new SoftDebuggerStartInfo(args), Options);
 

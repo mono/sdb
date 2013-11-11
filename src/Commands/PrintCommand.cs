@@ -70,6 +70,8 @@ namespace Mono.Debugger.Client.Commands
             }
 
             var val = f.GetExpressionValue(args, Debugger.Options.EvaluationOptions);
+            val.WaitHandle.WaitOne();
+
             var strErr = Utilities.StringizeValue(val);
 
             if (strErr.Item2)

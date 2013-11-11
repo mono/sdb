@@ -107,6 +107,9 @@ namespace Mono.Debugger.Client
                 err = false;
             }
 
+            if (Configuration.Current.DebugLogging)
+                str += string.Format(" ({0})", value.Flags);
+
             return Tuple.Create(str, err);
         }
     }

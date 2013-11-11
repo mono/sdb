@@ -58,7 +58,7 @@ namespace Mono.Debugger.Client.Commands
                     return;
                 }
 
-                var vals = new[] { f.GetThisReference() }.Concat(f.GetParameters());
+                var vals = new[] { f.GetThisReference() }.Concat(f.GetParameters()).Where(x => x != null);
 
                 if (!vals.Any())
                 {
@@ -67,9 +67,18 @@ namespace Mono.Debugger.Client.Commands
                 }
 
                 foreach (var val in vals)
-                    if (val != null)
+                {
+                    val.WaitHandle.WaitOne();
+
+                    var strErr = Utilities.StringizeValue(val);
+
+                    if (strErr.Item2)
+                        Log.Error("{0}<error>{1} {2} = {3}", Color.DarkRed, Color.Reset,
+                                  val.Name, strErr.Item1);
+                    else
                         Log.Info("{0}{1}{2} {3} = {4}", Color.DarkGreen, val.TypeName,
-                                 Color.Reset, val.Name, val.DisplayValue);
+                                 Color.Reset, val.Name, strErr.Item1);
+                }
             }
         }
 
@@ -207,8 +216,18 @@ namespace Mono.Debugger.Client.Commands
                 }
 
                 foreach (var val in vals)
-                    Log.Info("{0}{1}{2} {3} = {4}", Color.DarkGreen, val.TypeName,
-                             Color.Reset, val.Name, val.DisplayValue);
+                {
+                    val.WaitHandle.WaitOne();
+
+                    var strErr = Utilities.StringizeValue(val);
+
+                    if (strErr.Item2)
+                        Log.Error("{0}<error>{1} {2} = {3}", Color.DarkRed, Color.Reset,
+                                  val.Name, strErr.Item1);
+                    else
+                        Log.Info("{0}{1}{2} {3} = {4}", Color.DarkGreen, val.TypeName,
+                                 Color.Reset, val.Name, strErr.Item1);
+                }
             }
         }
 

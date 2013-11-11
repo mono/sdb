@@ -163,6 +163,8 @@ namespace Mono.Debugger.Client.Commands
                     else
                     {
                         obj = f.GetExpressionValue(pair.Value, Debugger.Options.EvaluationOptions);
+                        obj.WaitHandle.WaitOne();
+
                         var strErr = Utilities.StringizeValue(obj);
 
                         value = strErr.Item1;

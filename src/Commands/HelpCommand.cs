@@ -39,6 +39,17 @@ namespace Mono.Debugger.Client.Commands
             get { return "help [cmd] [sub-cmd] [...]"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Prints detailed help for the given (sub-)command.\n" +
+                       "\n" +
+                       "If the command is a multi-command, its sub-commands are printed in addition\n" +
+                       "to its detailed help text.";
+            }
+        }
+
         public override void Process(string args)
         {
             var names = args.Split(' ').Where(x => x != string.Empty).ToArray();

@@ -39,6 +39,17 @@ namespace Mono.Debugger.Client.Commands
             get { return "connect|remote <addr> <port>"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Attempts to connect to a debuggee running at the specified IP address and\n" +
+                       "port.\n" +
+                       "\n" +
+                       "Respects the MaxConnectionAttempts and ConnectionAttemptInterval settings.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (Debugger.State != State.Exited)

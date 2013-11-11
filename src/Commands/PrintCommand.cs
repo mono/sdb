@@ -37,6 +37,16 @@ namespace Mono.Debugger.Client.Commands
             get { return "print|evaluate <expr>"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Evaluates the given expression in the context of the active stack frame.\n" +
+                       "The expression has access to any local variables and method arguments that\n" +
+                       "are in scope.";
+            }
+        }
+
         public override void Process(string args)
         {
             var f = Debugger.ActiveFrame;

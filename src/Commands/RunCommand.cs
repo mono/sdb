@@ -39,6 +39,21 @@ namespace Mono.Debugger.Client.Commands
             get { return "run|execute|launch <path>"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Runs an inferior process locally. The argument must be the path to the\n" +
+                       "executable file (i.e. '.exe').\n" +
+                       "\n" +
+                       "The following debugger state is taken into account:\n" +
+                       "\n" +
+                       "* Working directory.\n" +
+                       "* Program arguments.\n" +
+                       "* Environment variables.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (Debugger.State != State.Exited)

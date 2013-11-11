@@ -37,6 +37,15 @@ namespace Mono.Debugger.Client.Commands
             get { return "continue|resume"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Continues execution of the inferior process after it has been paused by a\n" +
+                       "breakpoint, catchpoint, unhandled exception, etc.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (Debugger.State == State.Exited)

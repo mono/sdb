@@ -39,6 +39,14 @@ namespace Mono.Debugger.Client.Commands
             get { return "listen|wait <addr> <port>"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Listens for a remote debuggee connection on the given IP address and port.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (Debugger.State != State.Exited)

@@ -37,6 +37,17 @@ namespace Mono.Debugger.Client.Commands
             get { return "decompile"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Decompiles the IL code in the active stack frame and attempts to highlight\n" +
+                       "the line closest to the current IL offset.\n" +
+                       "\n" +
+                       "Currently unimplemented.";
+            }
+        }
+
         public override void Process(string args)
         {
             Log.Error("Decompilation is not yet implemented.");

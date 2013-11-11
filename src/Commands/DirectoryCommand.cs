@@ -38,6 +38,16 @@ namespace Mono.Debugger.Client.Commands
             get { return "directory|cd|cwd [path]"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Without any argument, prints the current working directory for inferior\n" +
+                       "processes launched locally. If an argument is given, the working directory\n" +
+                       "is set to that argument.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (args.Length == 0)

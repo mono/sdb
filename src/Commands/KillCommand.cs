@@ -37,6 +37,17 @@ namespace Mono.Debugger.Client.Commands
             get { return "kill|stop"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Kills the current inferior process, regardless of its state.\n" +
+                       "\n" +
+                       "For remote debugging sessions, this also makes the remote virtual machine\n" +
+                       "exit immediately.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (Debugger.State == State.Exited)

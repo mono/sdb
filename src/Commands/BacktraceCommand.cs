@@ -37,6 +37,15 @@ namespace Mono.Debugger.Client.Commands
             get { return "backtrace|bt"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Prints a backtrace of the call stack for the active thread. Includes\n" +
+                       "IL offsets, source locations, and source lines.";
+            }
+        }
+
         public override void Process(string args)
         {
             var bt = Debugger.ActiveBacktrace;

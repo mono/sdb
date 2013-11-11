@@ -37,6 +37,16 @@ namespace Mono.Debugger.Client.Commands
             get { return "quit|bye|exit [!]"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Exits the debugger. If the '!' argument is given, any active inferior\n" +
+                       "process will be killed; otherwise, the command will refuse to quit if an\n" +
+                       "inferior process is active.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (Debugger.State != State.Exited && !args.StartsWith("!"))

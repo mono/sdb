@@ -40,6 +40,18 @@ namespace Mono.Debugger.Client.Commands
             get { return "source|src [lower] [upper]"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Prints the source for the current stack frame and highlights the current\n" +
+                       "line.\n" +
+                       "\n" +
+                       "If arguments are given, they specify how many lines to print before and\n" +
+                       "after the current line.";
+            }
+        }
+
         public override void Process(string args)
         {
             var f = Debugger.ActiveFrame;

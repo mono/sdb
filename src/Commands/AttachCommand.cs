@@ -34,7 +34,17 @@ namespace Mono.Debugger.Client.Commands
 
         public override string Syntax
         {
-            get { return "attach"; }
+            get { return "attach <id>"; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Attempts to attach to the given process ID.\n" +
+                       "\n" +
+                       "Currently unimplemented.";
+            }
         }
 
         public override void Process(string args)

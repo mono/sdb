@@ -37,6 +37,15 @@ namespace Mono.Debugger.Client.Commands
             get { return "plugin|addin <file>"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Attempts to load the given plugin assembly. All types that are tagged with\n" +
+                       "the '[Command]' attribute will be instantiated and made available.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (!File.Exists(args))

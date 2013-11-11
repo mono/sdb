@@ -37,6 +37,22 @@ namespace Mono.Debugger.Client.Commands
             get { return "reset"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Resets the following debugger state to defaults:\n" +
+                       "\n" +
+                       "* Working directory.\n" +
+                       "* Program arguments.\n" +
+                       "* Environment variables.\n" +
+                       "* Watchpoints.\n" +
+                       "* Breakpoints and catchpoints.\n" +
+                       "* Session options.\n" +
+                       "* Evaluation options.";
+            }
+        }
+
         public override void Process(string args)
         {
             Debugger.ResetState();

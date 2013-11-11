@@ -38,6 +38,16 @@ namespace Mono.Debugger.Client.Commands
             get { return "arguments|args [args]"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Without any argument, this command prints the arguments to be passed to\n" +
+                       "inferior processes launched locally. If an argument is given, it is set\n" +
+                       "as the arguments to be passed.";
+            }
+        }
+
         public override void Process(string args)
         {
             if (args.Length == 0)

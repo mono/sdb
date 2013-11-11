@@ -38,6 +38,18 @@ namespace Mono.Debugger.Client.Commands
             get { return "disassemble|disasm|dasm [lower] [upper]"; }
         }
 
+        public override string Help
+        {
+            get
+            {
+                return "Disassembles the current stack frame and highlights the line corresponding\n" +
+                       "to the current IL offset.\n" +
+                       "\n" +
+                       "If arguments are given, they specify how many lines to print before and\n" +
+                       "after the line corresponding to the current IL offset.";
+            }
+        }
+
         public override void Process(string args)
         {
             var f = Debugger.ActiveFrame;

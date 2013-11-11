@@ -197,6 +197,9 @@ namespace Mono.Debugger.Client
             Debugger.Pause();
             Debugger.Kill();
 
+            while (!Debugger.DebuggeeKilled)
+                Thread.Sleep(10);
+
             Log.Notice("Bye");
         }
     }

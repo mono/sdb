@@ -38,6 +38,8 @@ namespace Mono.Debugger.Client
             ResetOptions();
             ResetState();
 
+            _debuggeeKilled = true;
+
             DebuggerLoggingService.CustomLogger = new CustomLogger();
         }
 
@@ -62,6 +64,14 @@ namespace Mono.Debugger.Client
         public static SortedDictionary<long, BreakEvent> Breakpoints { get; private set; }
 
         public static BreakpointStore BreakEvents { get; private set; }
+
+        public static bool DebuggeeKilled
+        {
+            get { return _debuggeeKilled; }
+            set { _debuggeeKilled = value; }
+        }
+
+        static volatile bool _debuggeeKilled;
 
         static long _nextWatchId;
 
@@ -277,6 +287,8 @@ namespace Mono.Debugger.Client
                     // Make sure we clean everything up on a normal exit.
                     Kill();
 
+                    _debuggeeKilled = true;
+
                     CommandLine.ResumeEvent.Set();
                 };
 
@@ -329,6 +341,7 @@ namespace Mono.Debugger.Client
                 CurrentPort = -1;
 
                 _showResumeMessage = false;
+                _debuggeeKilled = false;
 
                 var info = new SoftDebuggerStartInfo(Configuration.Current.RuntimePrefix,
                                                      EnvironmentVariables)
@@ -360,6 +373,7 @@ namespace Mono.Debugger.Client
                 CurrentPort = port;
 
                 _showResumeMessage = false;
+                _debuggeeKilled = false;
 
                 var args = new SoftDebuggerConnectArgs(string.Empty, address, port)
                 {
@@ -384,6 +398,7 @@ namespace Mono.Debugger.Client
                 CurrentPort = port;
 
                 _showResumeMessage = false;
+                _debuggeeKilled = false;
 
                 var args = new SoftDebuggerListenArgs(string.Empty, address, port);
 

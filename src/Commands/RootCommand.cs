@@ -26,11 +26,11 @@ namespace Mono.Debugger.Client.Commands
         {
             AddCommandWithName<PrintCommand>("p");
             AddCommand<AttachCommand>();
-            AddCommandWithName<BreakCommand>("b");
+            AddCommandWithName<BreakpointCommand>("b");
             AddCommand<BacktraceCommand>();
-            AddCommand<BreakCommand>();
+            AddCommand<BreakpointCommand>();
             AddCommandWithName<ContinueCommand>("c");
-            AddCommand<CatchCommand>();
+            AddCommand<CatchpointCommand>();
             AddCommand<ConfigCommand>();
             AddCommandWithName<RunCommand>("r");
             AddCommand<ConnectCommand>();

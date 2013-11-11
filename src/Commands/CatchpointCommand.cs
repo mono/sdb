@@ -21,9 +21,9 @@ using System.Linq;
 
 namespace Mono.Debugger.Client.Commands
 {
-    sealed class CatchCommand : MultiCommand
+    sealed class CatchpointCommand : MultiCommand
     {
-        sealed class CatchAddCommand : Command
+        sealed class CatchpointAddCommand : Command
         {
             public override string[] Names
             {
@@ -57,7 +57,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class CatchClearCommand : Command
+        sealed class CatchpointClearCommand : Command
         {
             public override string[] Names
             {
@@ -82,7 +82,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class CatchDeleteCommand : Command
+        sealed class CatchpointDeleteCommand : Command
         {
             public override string[] Names
             {
@@ -113,7 +113,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class CatchListCommand : Command
+        sealed class CatchpointListCommand : Command
         {
             public override string[] Names
             {
@@ -145,14 +145,14 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        public CatchCommand()
+        public CatchpointCommand()
         {
-            AddCommand<CatchAddCommand>();
-            AddCommand<CatchClearCommand>();
-            AddCommand<CatchDeleteCommand>();
-            AddCommand<CatchListCommand>();
+            AddCommand<CatchpointAddCommand>();
+            AddCommand<CatchpointClearCommand>();
+            AddCommand<CatchpointDeleteCommand>();
+            AddCommand<CatchpointListCommand>();
 
-            Forward<CatchListCommand>();
+            Forward<CatchpointListCommand>();
         }
 
         public override string[] Names

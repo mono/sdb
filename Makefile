@@ -71,8 +71,8 @@ override srcs = \
 	dep/Options.cs \
 	src/Commands/AttachCommand.cs \
 	src/Commands/BacktraceCommand.cs \
-	src/Commands/BreakCommand.cs \
-	src/Commands/CatchCommand.cs \
+	src/Commands/BreakpointCommand.cs \
+	src/Commands/CatchpointCommand.cs \
 	src/Commands/ConfigCommand.cs \
 	src/Commands/ConnectCommand.cs \
 	src/Commands/ContinueCommand.cs \

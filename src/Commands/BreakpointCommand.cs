@@ -24,11 +24,11 @@ using Mono.Debugging.Client;
 
 namespace Mono.Debugger.Client.Commands
 {
-    sealed class BreakCommand : MultiCommand
+    sealed class BreakpointCommand : MultiCommand
     {
-        sealed class BreakAddCommand : MultiCommand
+        sealed class BreakpointAddCommand : MultiCommand
         {
-            sealed class BreakAddLocationCommand : Command
+            sealed class BreakpointAddLocationCommand : Command
             {
                 public override string[] Names
                 {
@@ -108,7 +108,7 @@ namespace Mono.Debugger.Client.Commands
                 }
             }
 
-            sealed class BreakAddMethodCommand : Command
+            sealed class BreakpointAddMethodCommand : Command
             {
                 public override string[] Names
                 {
@@ -157,10 +157,10 @@ namespace Mono.Debugger.Client.Commands
                 }
             }
 
-            public BreakAddCommand()
+            public BreakpointAddCommand()
             {
-                AddCommand<BreakAddLocationCommand>();
-                AddCommand<BreakAddMethodCommand>();
+                AddCommand<BreakpointAddLocationCommand>();
+                AddCommand<BreakpointAddMethodCommand>();
             }
 
             public override string[] Names
@@ -179,7 +179,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class BreakClearCommand : Command
+        sealed class BreakpointClearCommand : Command
         {
             public override string[] Names
             {
@@ -205,7 +205,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class BreakConditionCommand : Command
+        sealed class BreakpointConditionCommand : Command
         {
             public override string[] Names
             {
@@ -276,7 +276,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class BreakDeleteCommand : Command
+        sealed class BreakpointDeleteCommand : Command
         {
             public override string[] Names
             {
@@ -318,7 +318,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class BreakListCommand : Command
+        sealed class BreakpointListCommand : Command
         {
             public override string[] Names
             {
@@ -360,7 +360,7 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class BreakToggleCommand : Command
+        sealed class BreakpointToggleCommand : Command
         {
             public override string[] Names
             {
@@ -410,16 +410,16 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        public BreakCommand()
+        public BreakpointCommand()
         {
-            AddCommand<BreakAddCommand>();
-            AddCommand<BreakClearCommand>();
-            AddCommand<BreakConditionCommand>();
-            AddCommand<BreakDeleteCommand>();
-            AddCommand<BreakListCommand>();
-            AddCommand<BreakToggleCommand>();
+            AddCommand<BreakpointAddCommand>();
+            AddCommand<BreakpointClearCommand>();
+            AddCommand<BreakpointConditionCommand>();
+            AddCommand<BreakpointDeleteCommand>();
+            AddCommand<BreakpointListCommand>();
+            AddCommand<BreakpointToggleCommand>();
 
-            Forward<BreakListCommand>();
+            Forward<BreakpointListCommand>();
         }
 
         public override string[] Names

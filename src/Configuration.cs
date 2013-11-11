@@ -61,8 +61,6 @@ namespace Mono.Debugger.Client
 
         public int MemberEvaluationTimeout { get; set; }
 
-        public bool ProjectAssembliesOnly { get; set; }
-
         public string RuntimePrefix { get; set; }
 
         public bool StepOverPropertiesAndOperators { get; set; }
@@ -150,7 +148,6 @@ namespace Mono.Debugger.Client
 
             var opt = Debugger.Options;
 
-            opt.ProjectAssembliesOnly = Current.ProjectAssembliesOnly;
             opt.StepOverPropertiesAndOperators = Current.StepOverPropertiesAndOperators;
 
             var eval = opt.EvaluationOptions;

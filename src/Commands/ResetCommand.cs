@@ -46,7 +46,7 @@ namespace Mono.Debugger.Client.Commands
                        "* Working directory.\n" +
                        "* Program arguments.\n" +
                        "* Environment variables.\n" +
-                       "* Watchpoints.\n" +
+                       "* Watches.\n" +
                        "* Breakpoints and catchpoints.\n" +
                        "* Session options.\n" +
                        "* Evaluation options.";

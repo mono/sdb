@@ -32,21 +32,21 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Summary
             {
-                get { return "Add a watchpoint expression."; }
+                get { return "Add a watch expression."; }
             }
 
             public override string Syntax
             {
-                get { return "watch|wp add <expr>"; }
+                get { return "watch add <expr>"; }
             }
 
             public override void Process(string args)
             {
                 var id = Debugger.GetWatchId();
 
-                Debugger.Watchpoints.Add(id, args);
+                Debugger.Watches.Add(id, args);
 
-                Log.Info("Added watchpoint '{0}' with expression '{1}'", id, args);
+                Log.Info("Added watch '{0}' with expression '{1}'", id, args);
             }
         }
 
@@ -59,19 +59,19 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Summary
             {
-                get { return "Delete all watchpoints."; }
+                get { return "Delete all watches."; }
             }
 
             public override string Syntax
             {
-                get { return "watch|wp clear"; }
+                get { return "watch clear"; }
             }
 
             public override void Process(string args)
             {
-                Debugger.Watchpoints.Clear();
+                Debugger.Watches.Clear();
 
-                Log.Info("All watchpoints cleared");
+                Log.Info("All watches cleared");
             }
         }
 
@@ -84,12 +84,12 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Summary
             {
-                get { return "Delete a watchpoint by ID."; }
+                get { return "Delete a watch by ID."; }
             }
 
             public override string Syntax
             {
-                get { return "watch|wp delete|remove <id>"; }
+                get { return "watch delete|remove <id>"; }
             }
 
             public override void Process(string args)
@@ -98,21 +98,21 @@ namespace Mono.Debugger.Client.Commands
 
                 if (!long.TryParse(args, out num))
                 {
-                    Log.Error("Invalid watchpoint ID");
+                    Log.Error("Invalid watch ID");
                     return;
                 }
 
                 string expr;
 
-                if (!Debugger.Watchpoints.TryGetValue(num, out expr))
+                if (!Debugger.Watches.TryGetValue(num, out expr))
                 {
-                    Log.Error("Watchpoint '{0}' not found", num);
+                    Log.Error("Watch '{0}' not found", num);
                     return;
                 }
 
-                Debugger.Watchpoints.Remove(num);
+                Debugger.Watches.Remove(num);
 
-                Log.Info("Watchpoint '{0}' (with expression '{1}') deleted", num, expr);
+                Log.Info("Watch '{0}' (with expression '{1}') deleted", num, expr);
             }
         }
 
@@ -125,12 +125,12 @@ namespace Mono.Debugger.Client.Commands
 
             public override string Summary
             {
-                get { return "List all set watchpoints and their IDs."; }
+                get { return "List all set watches and their IDs."; }
             }
 
             public override string Syntax
             {
-                get { return "watch|wp list"; }
+                get { return "watch list"; }
             }
 
             public override void Process(string args)
@@ -143,13 +143,13 @@ namespace Mono.Debugger.Client.Commands
                     return;
                 }
 
-                if (Debugger.Watchpoints.Count == 0)
+                if (Debugger.Watches.Count == 0)
                 {
-                    Log.Info("No watchpoints");
+                    Log.Info("No watches");
                     return;
                 }
 
-                foreach (var pair in Debugger.Watchpoints)
+                foreach (var pair in Debugger.Watches)
                 {
                     ObjectValue obj = null;
                     string value;
@@ -191,12 +191,12 @@ namespace Mono.Debugger.Client.Commands
 
         public override string[] Names
         {
-            get { return new[] { "watch", "wp" }; }
+            get { return new[] { "watch" }; }
         }
 
         public override string Summary
         {
-            get { return "Add, delete, and show watchpoints."; }
+            get { return "Add, delete, and show watches."; }
         }
     }
 }

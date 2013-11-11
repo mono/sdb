@@ -59,7 +59,7 @@ namespace Mono.Debugger.Client
 
         public static Dictionary<string, string> EnvironmentVariables { get; private set; }
 
-        public static SortedDictionary<long, string> Watchpoints { get; private set; }
+        public static SortedDictionary<long, string> Watches { get; private set; }
 
         public static SortedDictionary<long, BreakEvent> Breakpoints { get; private set; }
 
@@ -527,7 +527,7 @@ namespace Mono.Debugger.Client
             WorkingDirectory = Environment.CurrentDirectory;
             Arguments = string.Empty;
             EnvironmentVariables = new Dictionary<string, string>();
-            Watchpoints = new SortedDictionary<long, string>();
+            Watches = new SortedDictionary<long, string>();
             _nextWatchId = 0;
             Breakpoints = new SortedDictionary<long, BreakEvent>();
             BreakEvents = new BreakpointStore();
@@ -556,7 +556,7 @@ namespace Mono.Debugger.Client
 
             public Dictionary<string, string> EnvironmentVariables { get; set; }
 
-            public SortedDictionary<long, string> Watchpoints { get; set; }
+            public SortedDictionary<long, string> Watches { get; set; }
 
             public long NextWatchId { get; set; }
 
@@ -574,7 +574,7 @@ namespace Mono.Debugger.Client
                 WorkingDirectory = WorkingDirectory,
                 Arguments = Arguments,
                 EnvironmentVariables = EnvironmentVariables,
-                Watchpoints = Watchpoints,
+                Watches = Watches,
                 NextWatchId = _nextWatchId,
                 Breakpoints = Breakpoints.Select(x => Tuple.Create(x.Key, x.Value, BreakEvents.Contains(x.Value)))
                                          .ToDictionary(x => x.Item1, x => Tuple.Create(x.Item2, x.Item3)),
@@ -616,7 +616,7 @@ namespace Mono.Debugger.Client
             WorkingDirectory = state.WorkingDirectory;
             Arguments = state.Arguments;
             EnvironmentVariables = state.EnvironmentVariables;
-            Watchpoints = state.Watchpoints;
+            Watches = state.Watches;
 
             foreach (var kvp in state.Breakpoints)
             {

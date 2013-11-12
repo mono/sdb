@@ -212,6 +212,17 @@ namespace Mono.Debugger.Client
                     }
                 };
 
+                Session.TypeResolverHandler += (identifier, location) =>
+                {
+                    // I honestly have no idea how correct this is. I suspect you
+                    // could probably break it in some corner cases. It does make
+                    // something like `p Android.Runtime.JNIEnv.Handle` work,
+                    // though, which would otherwise have required `global::` to
+                    // be explicitly prepended.
+
+                    return identifier;
+                };
+
                 Session.TargetEvent += (sender, e) =>
                 {
                     Log.Debug("Event: '{0}'", e.Type);
@@ -545,6 +556,8 @@ namespace Mono.Debugger.Client
             {
                 EvaluationOptions = EvaluationOptions.DefaultOptions
             };
+
+            Options.EvaluationOptions.UseExternalTypeResolver = true;
         }
 
         [Serializable]

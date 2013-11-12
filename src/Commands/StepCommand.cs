@@ -41,6 +41,14 @@ namespace Mono.Debugger.Client.Commands
                     get { return "step over line"; }
                 }
 
+                public override string Help
+                {
+                    get
+                    {
+                        return "Steps over a line.";
+                    }
+                }
+
                 public override void Process(string args)
                 {
                     if (Debugger.State == State.Suspended)
@@ -65,6 +73,14 @@ namespace Mono.Debugger.Client.Commands
                 public override string Syntax
                 {
                     get { return "step over instruction|insn"; }
+                }
+
+                public override string Help
+                {
+                    get
+                    {
+                        return "Steps over an instruction.";
+                    }
                 }
 
                 public override void Process(string args)
@@ -94,6 +110,18 @@ namespace Mono.Debugger.Client.Commands
                 get { return "Step over a line or an instruction."; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Steps over a line or an instruction.\n" +
+                           "\n" +
+                           "This executes the line or instruction that's next in the source code or\n" +
+                           "IL stream. If the line or instruction contains a call, the debugger\n" +
+                           "will treat it as a single unit, as opposed to 'step into'.";
+                }
+            }
+
             public override string Parent
             {
                 get { return "step"; }
@@ -117,6 +145,14 @@ namespace Mono.Debugger.Client.Commands
                 public override string Syntax
                 {
                     get { return "step into line"; }
+                }
+
+                public override string Help
+                {
+                    get
+                    {
+                        return "Steps into a line.";
+                    }
                 }
 
                 public override void Process(string args)
@@ -143,6 +179,14 @@ namespace Mono.Debugger.Client.Commands
                 public override string Syntax
                 {
                     get { return "step into instruction|insn"; }
+                }
+
+                public override string Help
+                {
+                    get
+                    {
+                        return "Steps into an instruction.";
+                    }
                 }
 
                 public override void Process(string args)
@@ -172,6 +216,18 @@ namespace Mono.Debugger.Client.Commands
                 get { return "Step into a line or an instruction."; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Steps into a line or an instruction.\n" +
+                           "\n" +
+                           "This executes the line or instruction that's next in the source code or\n" +
+                           "IL stream. If the line or instruction contains a call, the debugger\n" +
+                           "will pause at the first line or instruction inside the callee.";
+                }
+            }
+
             public override string Parent
             {
                 get { return "step"; }
@@ -193,6 +249,16 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "step out"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Steps out of the current method.\n" +
+                           "\n" +
+                           "This resumes the debuggee until it exits the method it's currently in.";
+                }
             }
 
             public override void Process(string args)
@@ -222,6 +288,14 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Single-step through lines/instructions/methods."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Single-steps through lines, instructions, and methods.";
+            }
         }
     }
 }

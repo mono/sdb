@@ -41,6 +41,16 @@ namespace Mono.Debugger.Client.Commands
                 get { return "config|cfg get <name>"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Gets the value of the given configuration element.\n" +
+                           "\n" +
+                           "This is either the default value or the value in '~/.sdb.cfg'.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var name = args.Split(' ').Where(x => x != string.Empty).FirstOrDefault();
@@ -83,6 +93,16 @@ namespace Mono.Debugger.Client.Commands
                 get { return "config|cfg list"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all configuration elements and their values.\n" +
+                           "\n" +
+                           "These are either the default values or the values in '~/.sdb.cfg'.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var props = typeof(Configuration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -109,6 +129,16 @@ namespace Mono.Debugger.Client.Commands
                 get { return "config|cfg reset"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Resets all configuration elements to their default values.\n" +
+                           "\n" +
+                           "Note that this overwrites '~/.sdb.cfg' too.";
+                }
+            }
+
             public override void Process(string args)
             {
                 Configuration.Defaults();
@@ -132,6 +162,16 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "config|cfg set <name> <value>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Sets the value of the given configuration element.\n" +
+                           "\n" +
+                           "If '~/.sdb.cfg' doesn't exist, this command causes it to be created.";
+                }
             }
 
             public override void Process(string args)
@@ -215,6 +255,17 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Manipulate the debugger configuration."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Manipulates the debugger configuration.\n" +
+                       "\n" +
+                       "Configuration values are stored in '~/.sdb.cfg' and are loaded on debugger\n" +
+                       "startup. The file is only created when a configuration value is set.";
+            }
         }
     }
 }

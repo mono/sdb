@@ -42,6 +42,16 @@ namespace Mono.Debugger.Client.Commands
                 get { return "frame arguments|args"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all arguments and their values for the current frame.\n" +
+                           "\n" +
+                           "The 'this' reference is included if available.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var f = Debugger.ActiveFrame;
@@ -99,6 +109,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "frame down"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Sets the active frame to the frame below the current frame.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var bt = Debugger.ActiveBacktrace;
@@ -154,6 +172,15 @@ namespace Mono.Debugger.Client.Commands
                 get { return "frame get"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Shows the currently active frame, along with its source location and\n" +
+                           "and source line.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var f = Debugger.ActiveFrame;
@@ -189,6 +216,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "frame locals|variables|vars"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all local variables and their values in the current frame.";
+                }
             }
 
             public override void Process(string args)
@@ -246,6 +281,16 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "frame set <num>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Sets the current frame to the given number." +
+                           "\n" +
+                           "The numbers shown in a 'backtrace' can be passed to this command.";
+                }
             }
 
             public override void Process(string args)
@@ -309,6 +354,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "frame up"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Sets the active frame to the frame above the current frame.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var bt = Debugger.ActiveBacktrace;
@@ -367,6 +420,14 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Get, set, and inspect stack frames."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Interacts with the call stack.";
+            }
         }
     }
 }

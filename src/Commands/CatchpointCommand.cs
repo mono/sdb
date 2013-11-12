@@ -40,6 +40,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "catch|cp add <type>"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Adds a catchpoint for the given exception type.";
+                }
+            }
+
             public override void Process(string args)
             {
                 foreach (var cp in Debugger.BreakEvents.GetCatchpoints())
@@ -74,6 +82,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "catch|cp clear"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Removes all active catchpoints.";
+                }
+            }
+
             public override void Process(string args)
             {
                 Debugger.BreakEvents.ClearCatchpoints();
@@ -97,6 +113,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "catch|cp delete|remove <type>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Deletes the catchpoint for the given exception type, if it exists.";
+                }
             }
 
             public override void Process(string args)
@@ -128,6 +152,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "catch|cp list"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all currently active catchpoints.";
+                }
             }
 
             public override void Process(string args)
@@ -163,6 +195,18 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Add, delete, and show catchpoints."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Manipulates catchpoints.\n" +
+                       "\n" +
+                       "When a catchpoint is added for an exception type and the debuggee code\n" +
+                       "actively catches it, the debugger will break on the 'throw' site of the\n" +
+                       "exception.";
+            }
         }
     }
 }

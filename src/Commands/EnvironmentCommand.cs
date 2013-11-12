@@ -42,6 +42,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "environment clear"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Clears all environment variables.";
+                }
+            }
+
             public override void Process(string args)
             {
                 Debugger.EnvironmentVariables.Clear();
@@ -65,6 +73,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "environment delete|remove <name>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Deletes the given environment variable, if it exists.";
+                }
             }
 
             public override void Process(string args)
@@ -98,6 +114,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "environment get <name>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Gets the value of the given environment variable.";
+                }
             }
 
             public override void Process(string args)
@@ -136,6 +160,17 @@ namespace Mono.Debugger.Client.Commands
                 get { return "environment inherit"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Inherits all environment variables from the debugger host environment.\n" +
+                           "\n" +
+                           "This simply grabs all environment variables on the machine where the\n" +
+                           "debugger is running and inserts them into the debuggee environment.";
+                }
+            }
+
             public override void Process(string args)
             {
                 foreach (DictionaryEntry pair in Environment.GetEnvironmentVariables())
@@ -158,6 +193,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "environment list"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all environment variables and their values.";
+                }
             }
 
             public override void Process(string args)
@@ -188,6 +231,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "environment set <name> <value>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Sets the given environment variable to the given value.";
+                }
             }
 
             public override void Process(string args)
@@ -232,6 +283,17 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Manipulate inferior environment variables."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Manipulates environment variables.\n" +
+                       "\n" +
+                       "Environment variables set with these commands are passed on to inferior\n" +
+                       "processes launched locally.";
+            }
         }
     }
 }

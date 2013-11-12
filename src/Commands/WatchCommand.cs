@@ -40,6 +40,16 @@ namespace Mono.Debugger.Client.Commands
                 get { return "watch add <expr>"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Adds a watch with the given expression.\n" +
+                           "\n" +
+                           "Watches and their values can be shown with the 'watch list' command.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var id = Debugger.GetWatchId();
@@ -67,6 +77,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "watch clear"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Clears all active watches.";
+                }
+            }
+
             public override void Process(string args)
             {
                 Debugger.Watches.Clear();
@@ -90,6 +108,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "watch delete|remove <id>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Deletes the watch with the specified ID, if it exists.";
+                }
             }
 
             public override void Process(string args)
@@ -131,6 +157,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "watch list"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all watches, along with their IDs, expressions, and values.";
+                }
             }
 
             public override void Process(string args)
@@ -199,6 +233,18 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Add, delete, and show watches."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Manipulates watches.\n" +
+                       "\n" +
+                       "Watches are simply expressions that can be saved and queried at any point\n" +
+                       "when the debuggee is paused. They are useful for easily observing global\n" +
+                       "program state.";
+            }
         }
     }
 }

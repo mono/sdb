@@ -39,6 +39,17 @@ namespace Mono.Debugger.Client.Commands
                 get { return "thread backtrace|bt"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Prints a backtrace for all program threads.\n" +
+                           "\n" +
+                           "Functionally equivalent to applying 'backtrace' to all threads while\n" +
+                           "switching through them with 'thread set'.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var p = Debugger.ActiveProcess;
@@ -102,6 +113,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "thread get"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Gets the currently active thread.";
+                }
+            }
+
             public override void Process(string args)
             {
                 var t = Debugger.ActiveThread;
@@ -136,6 +155,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "thread list"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all program threads, along with their IDs and names.";
+                }
             }
 
             public override void Process(string args)
@@ -181,6 +208,17 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "thread set <id>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Sets the currently active thread to the given thread ID.\n" +
+                           "\n" +
+                           "All following commands that somehow interact with the program's call\n" +
+                           "stack will happen on the specified thread.";
+                }
             }
 
             public override void Process(string args)
@@ -238,6 +276,14 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Get, set, and inspect program threads."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Interacts with program threads.";
+            }
         }
     }
 }

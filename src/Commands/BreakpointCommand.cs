@@ -45,6 +45,17 @@ namespace Mono.Debugger.Client.Commands
                     get { return "break|bp add location <file> <line>"; }
                 }
 
+                public override string Help
+                {
+                    get
+                    {
+                        return "Adds a breakpoint to the specified source location.\n" +
+                               "\n" +
+                               "This is a 'normal' breakpoint associated with a file name and line\n" +
+                               "which can have an optional condition expression.";
+                    }
+                }
+
                 public override void Process(string args)
                 {
                     var splitArgs = args.Split(' ').Where(x => x != string.Empty);
@@ -125,6 +136,17 @@ namespace Mono.Debugger.Client.Commands
                     get { return "break|bp add method|function <name>"; }
                 }
 
+                public override string Help
+                {
+                    get
+                    {
+                        return "Adds a breakpoint at the specified method.\n" +
+                               "\n" +
+                               "A breakpint of this type has no location or condition; it simply\n" +
+                               "triggers whenever execution enters the specified method.";
+                    }
+                }
+
                 public override void Process(string args)
                 {
                     if (args.Length == 0)
@@ -173,6 +195,16 @@ namespace Mono.Debugger.Client.Commands
                 get { return "Add a breakpoint at a location or method."; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Adds a breakpoint at a source location or method entry.\n" +
+                           "\n" +
+                           "Breakpoints are initially toggled on when added.";
+                }
+            }
+
             public override string Parent
             {
                 get { return "break"; }
@@ -194,6 +226,14 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "break|bp clear"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Removes all breakpoints.";
+                }
             }
 
             public override void Process(string args)
@@ -220,6 +260,17 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "break|bp condition|expression <id> [expr]"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Without any expression argument, unsets the condition for the given\n" +
+                           "breakpoint. If an expression is given, the breakpoint's condition is\n" +
+                           "set to that value, such that it will only trigger if the condition\n" +
+                           "evaluates to true.";
+                }
             }
 
             public override void Process(string args)
@@ -293,6 +344,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "break|bp delete|remove <id>"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Deletes the breakpoint with the specified ID, if it exists.";
+                }
+            }
+
             public override void Process(string args)
             {
                 long num;
@@ -335,6 +394,14 @@ namespace Mono.Debugger.Client.Commands
                 get { return "break|bp list"; }
             }
 
+            public override string Help
+            {
+                get
+                {
+                    return "Lists all breakpoints, along with their IDs and settings.";
+                }
+            }
+
             public override void Process(string args)
             {
                 if (Debugger.Breakpoints.Count == 0)
@@ -375,6 +442,17 @@ namespace Mono.Debugger.Client.Commands
             public override string Syntax
             {
                 get { return "break|bp toggle <id>"; }
+            }
+
+            public override string Help
+            {
+                get
+                {
+                    return "Toggles a breakpint on or off.\n" +
+                           "\n" +
+                           "Toggling a breakpoint off keeps it in the breakpoint list but makes it\n" +
+                           "not actually trigger, regardless of its type or condition.";
+                }
             }
 
             public override void Process(string args)
@@ -430,6 +508,18 @@ namespace Mono.Debugger.Client.Commands
         public override string Summary
         {
             get { return "Add, delete, and show breakpoints."; }
+        }
+
+        public override string Help
+        {
+            get
+            {
+                return "Manipulates breakpoints.\n" +
+                       "\n" +
+                       "Breakpoints can be set at specific lines of source files or on the entry of\n" +
+                       "managed methods. Non-method breakpoints can also have conditions set such\n" +
+                       "that they only cause the debugger to break if the condition is true.";
+            }
         }
     }
 }

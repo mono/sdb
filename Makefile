@@ -28,7 +28,7 @@ GENDARME_FLAGS += --severity all --confidence all
 
 .PHONY: all clean gendarme
 
-all: bin/sdb bin/sdb.exe bin/COPYING bin/README
+all: bin/sdb.exe bin/sdb.exe.config bin/sdb bin/COPYING bin/README
 
 clean:
 	$(RM) -r bin
@@ -113,6 +113,10 @@ override srcs = \
 
 bin/sdb.exe: $(srcs) $(addprefix bin/, $(refs)) mono.snk
 	$(MCS) $(MCS_FLAGS) -keyfile:mono.snk -lib:bin -out:bin/sdb.exe -target:exe $(addprefix -r:, $(refs)) $(srcs)
+
+bin/sdb.exe.config: sdb.exe.config
+	$(MKDIR) -p bin
+	$(CP) $< $@
 
 bin/sdb: sdb.in
 	$(MKDIR) -p bin

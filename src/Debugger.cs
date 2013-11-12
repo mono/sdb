@@ -220,6 +220,9 @@ namespace Mono.Debugger.Client
                     // though, which would otherwise have required `global::` to
                     // be explicitly prepended.
 
+                    if (identifier == "__EXCEPTION_OBJECT__")
+                        return null;
+
                     foreach (var loc in ActiveFrame.GetAllLocals())
                         if (loc.Name == identifier)
                             return null;

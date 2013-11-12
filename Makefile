@@ -6,6 +6,7 @@ MCS ?= mcs
 MKDIR ?= mkdir
 PKG_CONFIG ?= pkg-config
 SED ?= sed
+TAR ?= tar
 XBUILD ?= xbuild
 
 MODE ?= Debug
@@ -28,7 +29,14 @@ GENDARME_FLAGS += --severity all --confidence all
 
 .PHONY: all clean gendarme
 
-all: bin/sdb.exe bin/sdb.exe.config bin/sdb bin/COPYING bin/README
+override results = \
+	sdb.exe \
+	sdb.exe.config \
+	sdb \
+	COPYING \
+	README
+
+all: $(addprefix bin/, $(results))
 
 clean:
 	$(RM) -r bin
@@ -130,3 +138,7 @@ bin/COPYING: COPYING
 bin/README: README.md
 	$(MKDIR) -p bin
 	$(CP) $< $@
+
+sdb.tar.gz: $(addprefix bin/, $(results))
+	$(RM) sdb.tar.gz
+	$(CD) bin && $(TAR) -zcf ../sdb.tar.gz $(results) $(refs)

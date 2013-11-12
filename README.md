@@ -133,29 +133,28 @@ For more commands, consult `help` in SDB.
 SDB has a few command line options that are useful for automation. For the full
 list, issue `sdb --help`.
 
-The first option is `-c` which can be used to queue up commands to be executed
-once the debugger has started. This is useful for quick automated debugging
-runs, but can also make regular work easier. For instance:
+First of all, all non-option arguments passed to SDB are treated as commands
+that SDB will execute at startup. For instance:
 
-    $ sdb -c "run test.exe"
+    $ sdb "run test.exe"
 
 Or:
 
-    $ sdb -c "args --foo --bar baz" -c "run test.exe"
+    $ sdb "args --foo --bar baz" "run test.exe"
 
 This starts SDB and immediately executes `test.exe` with the given arguments.
 
-The second option is `-f`. This option specifies files that SDB should read
-commands from. These commands are executed before any commands specified with
-`-c`. This option is useful for longer command sequences that are easier to
-maintain in a separate file. Example:
+The first option is `-f`. This option specifies files that SDB should read
+commands from. These commands are executed before any commands specified as
+non-option arguments. This option is useful for longer command sequences that
+are easier to maintain in a separate file. Example:
 
     $ cat cmds.txt
     args --foo --bar baz
     run test.exe
     $ sdb -f cmds.txt
 
-The last option is `-b`. This runs SDB in batch mode; that is, it will exit
+The second option is `-b`. This runs SDB in batch mode; that is, it will exit
 as soon as all commands have finished and no inferior process is running. This
 goes well with `-f` for running programs regularly under SDB.
 

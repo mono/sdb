@@ -31,8 +31,8 @@ namespace Mono.Debugger.Client
             Console.WriteLine("Usage:");
             Console.WriteLine();
             Console.WriteLine("  sdb [options]");
-            Console.WriteLine("  sdb [options] -c \"run prog.exe\"");
-            Console.WriteLine("  sdb [options] -c \"args --foo --bar baz\" -c \"run prog.exe\"");
+            Console.WriteLine("  sdb [options] \"run prog.exe\"");
+            Console.WriteLine("  sdb [options] \"args --foo --bar baz\" \"run prog.exe\"");
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine();
@@ -40,7 +40,8 @@ namespace Mono.Debugger.Client
             set.WriteOptionDescriptions(Console.Out);
 
             Console.WriteLine();
-            Console.WriteLine("Note: Files are executed before individual commands.");
+            Console.WriteLine("All non-option arguments are treated as commands that are executed");
+            Console.WriteLine("at startup. Files are executed before individual commands.");
         }
 
         static int Main(string[] args)
@@ -49,7 +50,6 @@ namespace Mono.Debugger.Client
             var help = false;
             var batch = false;
 
-            var cmds = new List<string>();
             var files = new List<string>();
 
             var p = new OptionSet()
@@ -57,13 +57,14 @@ namespace Mono.Debugger.Client
                 {"v|version", "Show version information and exit.", v => version = v != null},
                 {"h|help", "Show this help message and exit.", v => help = v != null},
                 {"b|batch", "Exit after running commands.", v => batch = v != null},
-                {"c|cmd=", "Execute a given command at startup.", c => cmds.Add(c)},
                 {"f|file=", "Execute commands in the given file at startup.", f => files.Add(f)}
             };
 
+            List<string> cmds;
+
             try
             {
-                p.Parse(args);
+                cmds = p.Parse(args);
             }
             catch (OptionException ex)
             {

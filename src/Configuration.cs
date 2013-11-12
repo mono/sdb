@@ -47,6 +47,8 @@ namespace Mono.Debugger.Client
 
         public int EvaluationTimeout { get; set; }
 
+        public string ExceptionIdentifier { get; set; }
+
         public bool FlattenHierarchy { get; set; }
 
         public bool HexadecimalIntegers { get; set; }
@@ -133,6 +135,7 @@ namespace Mono.Debugger.Client
             Current.EllipsizeStrings = true;
             Current.EllipsizeThreshold = 100;
             Current.EvaluationTimeout = 1000;
+            Current.ExceptionIdentifier = "$exception";
             Current.FlattenHierarchy = true;
             Current.InputPrompt = "(sdb)";
             Current.MaxConnectionAttempts = 1;
@@ -156,6 +159,7 @@ namespace Mono.Debugger.Client
             eval.AllowTargetInvoke = Current.AllowTargetInvoke;
             eval.AllowToStringCalls = Current.AllowToStringCalls;
             eval.ChunkRawStrings = Current.ChunkRawStrings;
+            eval.CurrentExceptionTag = Current.ExceptionIdentifier;
             eval.EllipsizeStrings = Current.EllipsizeStrings;
             eval.EllipsizedLength = Current.EllipsizeThreshold;
             eval.EvaluationTimeout = Current.EvaluationTimeout;

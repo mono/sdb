@@ -288,3 +288,6 @@ For the boring details, see the `COPYING` file.
   is because of a bug in the finalizer of `System.Timers.Timer` in Mono. This
   bug has been fixed and should be available in whatever Mono version comes
   after 3.2.5.
+* The line editor can act weirdly on OS X because it uses the `libedit` library
+  rather than `libreadline` proper. In some cases, disabling colors can fix
+  odd behavior.

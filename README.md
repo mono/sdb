@@ -43,6 +43,7 @@ line to affect the build:
     * `MKDIR`: Path to the `mkdir` POSIX utility.
     * `PKG_CONFIG`: Path to the `pkg-config` utility.
     * `SED`: Path to the `sed` POSIX utility.
+    * `TAR`: Path to the `tar` POSIX utility.
     * `XBUILD`: Which XBuild executable to use.
     * `XBUILD_FLAGS`: Flags to pass to XBuild.
 

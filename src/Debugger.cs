@@ -220,6 +220,10 @@ namespace Mono.Debugger.Client
                     // though, which would otherwise have required `global::` to
                     // be explicitly prepended.
 
+                    foreach (var loc in ActiveFrame.GetAllLocals())
+                        if (loc.Name == identifier)
+                            return null;
+
                     return identifier;
                 };
 

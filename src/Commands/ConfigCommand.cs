@@ -142,6 +142,7 @@ namespace Mono.Debugger.Client.Commands
             public override void Process(string args)
             {
                 Configuration.Defaults();
+                Configuration.Apply();
 
                 Log.Info("All configuration values reset");
             }

@@ -205,7 +205,8 @@ namespace Mono.Debugger.Client
                 LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
         }
 
-        internal static void Run(Version ver, bool batch, IEnumerable<string> commands,
+        internal static void Run(Version ver, bool batch, bool rc,
+                                 IEnumerable<string> commands,
                                  IEnumerable<string> files)
         {
             Configuration.Read();
@@ -219,7 +220,7 @@ namespace Mono.Debugger.Client
 
             var rcFile = GetFilePath();
 
-            if (File.Exists(rcFile))
+            if (rc && File.Exists(rcFile))
                 RunFile(rcFile, true);
 
             foreach (var file in files)

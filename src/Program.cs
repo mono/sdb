@@ -49,6 +49,7 @@ namespace Mono.Debugger.Client
             var version = false;
             var help = false;
             var batch = false;
+            var rc = true;
 
             var files = new List<string>();
 
@@ -57,6 +58,7 @@ namespace Mono.Debugger.Client
                 {"v|version", "Show version information and exit.", v => version = v != null},
                 {"h|help", "Show this help message and exit.", v => help = v != null},
                 {"b|batch", "Exit after running commands.", v => batch = v != null},
+                {"n|norc", "Don't run commands in '~/.sdb.rc'.", v => rc = v == null},
                 {"f|file=", "Execute commands in the given file at startup.", f => files.Add(f)}
             };
 
@@ -89,7 +91,7 @@ namespace Mono.Debugger.Client
             if (!batch && !Utilities.IsWindows)
                 LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
 
-            CommandLine.Run(ver, batch, cmds, files);
+            CommandLine.Run(ver, batch, rc, cmds, files);
 
             return 0;
         }

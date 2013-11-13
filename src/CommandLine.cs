@@ -133,12 +133,12 @@ namespace Mono.Debugger.Client
         internal static void Run(Version ver, bool batch, IEnumerable<string> commands,
                                  IEnumerable<string> files)
         {
+            Configuration.Read();
+            Configuration.Apply();
+
             Log.Notice("Welcome to the Mono soft debugger (sdb {0})", ver);
             Log.Notice("Type 'help' for a list of commands or 'quit' to exit");
             Log.Info(string.Empty);
-
-            Configuration.Read();
-            Configuration.Apply();
 
             Root.AddCommands(Plugins.LoadDefault());
 

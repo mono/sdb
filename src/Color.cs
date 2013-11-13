@@ -34,13 +34,13 @@ namespace Mono.Debugger.Client
         {
             _disableColors = Console.IsOutputRedirected ||
                              new[] { null, "dumb" }.Contains(Environment.GetEnvironmentVariable("TERM")) ||
-                             Environment.GetEnvironmentVariable("SDB_COLORS") == "disable" ||
-                             Configuration.Current.DisableColors;
+                             Environment.GetEnvironmentVariable("SDB_COLORS") == "disable";
         }
 
         static string GetColor(string modifier, string color)
         {
-            return _disableColors ? string.Empty : modifier + color;
+            return _disableColors || Configuration.Current.DisableColors ?
+                   string.Empty : modifier + color;
         }
 
         public static string Red

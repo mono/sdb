@@ -23,8 +23,8 @@ namespace Mono.Debugger.Client
 {
     static class LibC
     {
-        // These values are correct for Linux and OS X. Might need to be
-        // reviewed for other platforms.
+        // These values are correct for Linux, OS X, and FreeBSD. Might
+        // need to be reviewed for other platforms.
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void SignalHandler(int signal);

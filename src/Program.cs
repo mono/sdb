@@ -86,7 +86,7 @@ namespace Mono.Debugger.Client
                 return 0;
             }
 
-            if (!batch)
+            if (!batch && !Utilities.IsWindows)
                 LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
 
             CommandLine.Run(ver, batch, cmds, files);

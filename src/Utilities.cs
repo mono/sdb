@@ -24,6 +24,11 @@ namespace Mono.Debugger.Client
 {
     public static class Utilities
     {
+        public static bool IsWindows
+        {
+            get { return (int)Environment.OSVersion.Platform < (int)PlatformID.Unix; }
+        }
+
         public static string StringizeFrame(StackFrame frame, bool includeIndex)
         {
             var loc = string.Empty;

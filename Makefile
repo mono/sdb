@@ -75,8 +75,12 @@ $(addprefix bin/, $(refs)):
 dep/Options.cs:
 	$(CP) `$(PKG_CONFIG) --variable=Sources mono-options` $@
 
+dep/getline.cs:
+	$(CP) `$(PKG_CONFIG) --variable=Sources mono-lineeditor` $@
+
 override srcs = \
 	dep/Options.cs \
+	dep/getline.cs \
 	src/Commands/AttachCommand.cs \
 	src/Commands/BacktraceCommand.cs \
 	src/Commands/BreakpointCommand.cs \

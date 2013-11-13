@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Mono.Terminal;
 using Mono.Debugger.Client.Commands;
 
 namespace Mono.Debugger.Client
@@ -38,17 +39,26 @@ namespace Mono.Debugger.Client
 
         static readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
 
-        static readonly LibC.SignalHandler _interruptHandler = new LibC.SignalHandler(ControlCHandler);
+        static readonly LibC.SignalHandler _interruptHandler;
+
+        static readonly LineEditor _windowsLineEditor;
+
+        static bool _windowsConsoleHandlerSet;
 
         static CommandLine()
         {
             Root = new RootCommand();
             ResumeEvent = new AutoResetEvent(false);
+
+            if (Utilities.IsWindows)
+                _windowsLineEditor = new LineEditor(null);
+            else
+                _interruptHandler = new LibC.SignalHandler(ControlCHandler);
         }
 
         static void Process(string cmd, bool rc)
         {
-            if (!rc)
+            if (!rc && !Utilities.IsWindows)
                 LibReadLine.AddHistory(cmd);
 
             var args = cmd.Trim();
@@ -140,16 +150,35 @@ namespace Mono.Debugger.Client
             }
         }
 
+        static void ConsoleControlCHandler(object sender, ConsoleCancelEventArgs e)
+        {
+            // FIXME: This is probably not the right way to go about
+            // things. We need to actually test this on Windows.
+            ControlCHandler(LibC.SignalInterrupt);
+
+            e.Cancel = true;
+        }
+
         internal static void SetControlCHandler()
         {
-            var fptr = Marshal.GetFunctionPointerForDelegate(_interruptHandler);
+            if (!Utilities.IsWindows)
+            {
+                var fptr = Marshal.GetFunctionPointerForDelegate(_interruptHandler);
 
-            LibC.SetSignal(LibC.SignalInterrupt, fptr);
+                LibC.SetSignal(LibC.SignalInterrupt, fptr);
+            }
+            else if (!_windowsConsoleHandlerSet)
+            {
+                Console.CancelKeyPress += ConsoleControlCHandler;
+
+                _windowsConsoleHandlerSet = true;
+            }
         }
 
         internal static void UnsetControlCHandler()
         {
-            LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
+            if (!Utilities.IsWindows)
+                LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
         }
 
         internal static void Run(Version ver, bool batch, IEnumerable<string> commands,
@@ -197,7 +226,9 @@ namespace Mono.Debugger.Client
                     Stop = true;
                 else
                 {
-                    cmd = LibReadLine.ReadLine(GetPrompt());
+                    cmd = Utilities.IsWindows ?
+                          _windowsLineEditor.Edit(GetPrompt(), string.Empty) :
+                          LibReadLine.ReadLine(GetPrompt());
 
                     // Did we get EOF?
                     if (cmd == null)

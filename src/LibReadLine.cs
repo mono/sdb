@@ -22,6 +22,9 @@ namespace Mono.Debugger.Client
 {
     static class LibReadLine
     {
+        [DllImport("libreadline", EntryPoint = "rl_initialize")]
+        public static extern int Initialize();
+
         [DllImport("libreadline", EntryPoint = "readline")]
         public static extern string ReadLine(string prompt);
 

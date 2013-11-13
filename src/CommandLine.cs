@@ -41,7 +41,7 @@ namespace Mono.Debugger.Client
 
         static readonly LibC.SignalHandler _interruptHandler;
 
-        static readonly LineEditor _windowsLineEditor;
+        static readonly LineEditor _lineEditor;
 
         static bool _windowsConsoleHandlerSet;
 
@@ -52,15 +52,23 @@ namespace Mono.Debugger.Client
             Root = new RootCommand();
             ResumeEvent = new AutoResetEvent(false);
 
-            if (Utilities.IsWindows)
-                _windowsLineEditor = new LineEditor(null);
-            else
+            try
+            {
+                LibReadLine.Initialize();
+            }
+            catch (DllNotFoundException)
+            {
+                // Fall back to `Mono.Terminal.LineEditor`.
+                _lineEditor = new LineEditor(null);
+            }
+
+            if (!Utilities.IsWindows)
                 _interruptHandler = new LibC.SignalHandler(ControlCHandler);
         }
 
         static void Process(string cmd, bool rc)
         {
-            if (!rc && !Utilities.IsWindows)
+            if (!rc && _lineEditor == null)
                 LibReadLine.AddHistory(cmd);
 
             var args = cmd.Trim();
@@ -242,8 +250,8 @@ namespace Mono.Debugger.Client
                     Stop = true;
                 else
                 {
-                    cmd = Utilities.IsWindows ?
-                          _windowsLineEditor.Edit(GetPrompt(), string.Empty) :
+                    cmd = _lineEditor != null ?
+                          _lineEditor.Edit(GetPrompt(), string.Empty) :
                           LibReadLine.ReadLine(GetPrompt());
 
                     // Did we get EOF?
@@ -261,6 +269,9 @@ namespace Mono.Debugger.Client
                 }
 
             }
+
+            if (Utilities.IsWindows)
+                Console.CancelKeyPress -= ConsoleControlCHandler;
 
             // Let's not leave dead Mono processes behind...
             Debugger.Pause();

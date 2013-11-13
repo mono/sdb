@@ -111,6 +111,7 @@ override srcs = \
 	src/Configuration.cs \
 	src/CustomLogger.cs \
 	src/Debugger.cs \
+	src/LibC.cs \
 	src/LibReadLine.cs \
 	src/Log.cs \
 	src/MultiCommand.cs \

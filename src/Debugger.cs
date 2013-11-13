@@ -249,6 +249,8 @@ namespace Mono.Debugger.Client
                     _showResumeMessage = true;
                     _activeProcess = Session.GetProcesses().SingleOrDefault();
 
+                    CommandLine.SetControlCHandler();
+
                     Log.Notice("Inferior process '{0}' ('{1}') started",
                                ActiveProcess.Id, StringizeTarget());
                 };
@@ -301,6 +303,8 @@ namespace Mono.Debugger.Client
                         Log.Notice("Inferior process '{0}' ('{1}') exited", ActiveProcess.Id, StringizeTarget());
                     else
                         Log.Notice("Failed to connect to '{0}'", StringizeTarget());
+
+                    CommandLine.UnsetControlCHandler();
 
                     // Make sure we clean everything up on a normal exit.
                     Kill();

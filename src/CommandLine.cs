@@ -20,6 +20,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Mono.Debugger.Client.Commands;
 
@@ -41,22 +42,6 @@ namespace Mono.Debugger.Client
         {
             Root = new RootCommand();
             ResumeEvent = new AutoResetEvent(false);
-
-            /*
-            FIXME: Currently broken: https://bugzilla.novell.com/show_bug.cgi?id=699451
-            Also breaks libreadline's history tracker...
-
-            Console.CancelKeyPress += (sender, e) =>
-            {
-                // Paint the prompt again.
-                Log.Info(string.Empty);
-                Log.InfoSameLine(GetPrompt());
-
-                Debugger.Pause();
-
-                e.Cancel = true;
-            };
-            */
         }
 
         static void Process(string cmd, bool rc)
@@ -128,6 +113,28 @@ namespace Mono.Debugger.Client
 
             foreach (var cmd in commands)
                 _queue.Enqueue(cmd);
+        }
+
+        static void ControlCHandler(int signal)
+        {
+            Log.Info(string.Empty);
+
+            Debugger.Pause();
+        }
+
+        internal static void SetControlCHandler()
+        {
+            if (Configuration.Current.EnableControlC)
+            {
+                var dg = new LibC.SignalHandler(ControlCHandler);
+
+                LibC.SetSignal(LibC.SignalInterrupt, Marshal.GetFunctionPointerForDelegate(dg));
+            }
+        }
+
+        internal static void UnsetControlCHandler()
+        {
+            LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
         }
 
         internal static void Run(Version ver, bool batch, IEnumerable<string> commands,

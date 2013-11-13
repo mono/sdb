@@ -45,6 +45,8 @@ namespace Mono.Debugger.Client
 
         public int EllipsizeThreshold { get; set; }
 
+        public bool EnableControlC { get; set; }
+
         public int EvaluationTimeout { get; set; }
 
         public string ExceptionIdentifier { get; set; }
@@ -134,6 +136,7 @@ namespace Mono.Debugger.Client
             Current.ConnectionAttemptInterval = 500;
             Current.EllipsizeStrings = true;
             Current.EllipsizeThreshold = 100;
+            Current.EnableControlC = true;
             Current.EvaluationTimeout = 1000;
             Current.ExceptionIdentifier = "$exception";
             Current.FlattenHierarchy = true;

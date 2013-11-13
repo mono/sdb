@@ -38,6 +38,8 @@ namespace Mono.Debugger.Client
 
         static readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
 
+        static LibC.SignalHandler _interruptHandler = new LibC.SignalHandler(ControlCHandler);
+
         static CommandLine()
         {
             Root = new RootCommand();
@@ -126,9 +128,9 @@ namespace Mono.Debugger.Client
         {
             if (Configuration.Current.EnableControlC)
             {
-                var dg = new LibC.SignalHandler(ControlCHandler);
+                var fptr = Marshal.GetFunctionPointerForDelegate(_interruptHandler);
 
-                LibC.SetSignal(LibC.SignalInterrupt, Marshal.GetFunctionPointerForDelegate(dg));
+                LibC.SetSignal(LibC.SignalInterrupt, fptr);
             }
         }
 

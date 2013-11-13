@@ -171,6 +171,11 @@ namespace Mono.Debugger.Client
                                         IntegerDisplayFormat.Hexadecimal :
                                         IntegerDisplayFormat.Decimal;
             eval.MemberEvaluationTimeout = Current.MemberEvaluationTimeout;
+
+            if (Current.EnableControlC)
+                CommandLine.SetControlCHandler();
+            else
+                CommandLine.UnsetControlCHandler();
         }
     }
 }

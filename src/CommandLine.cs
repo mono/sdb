@@ -38,7 +38,7 @@ namespace Mono.Debugger.Client
 
         static readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
 
-        static LibC.SignalHandler _interruptHandler = new LibC.SignalHandler(ControlCHandler);
+        static readonly LibC.SignalHandler _interruptHandler = new LibC.SignalHandler(ControlCHandler);
 
         static CommandLine()
         {
@@ -121,17 +121,30 @@ namespace Mono.Debugger.Client
         {
             Log.Info(string.Empty);
 
-            Debugger.Pause();
+            switch (Debugger.State)
+            {
+                case State.Running:
+                    Debugger.Pause();
+
+                    break;
+                case State.Suspended:
+                    Log.Error("Inferior is already suspended");
+                    Log.InfoSameLine(GetPrompt());
+
+                    break;
+                case State.Exited:
+                    Log.Error("No inferior process");
+                    Log.InfoSameLine(GetPrompt());
+
+                    break;
+            }
         }
 
         internal static void SetControlCHandler()
         {
-            if (Configuration.Current.EnableControlC)
-            {
-                var fptr = Marshal.GetFunctionPointerForDelegate(_interruptHandler);
+            var fptr = Marshal.GetFunctionPointerForDelegate(_interruptHandler);
 
-                LibC.SetSignal(LibC.SignalInterrupt, fptr);
-            }
+            LibC.SetSignal(LibC.SignalInterrupt, fptr);
         }
 
         internal static void UnsetControlCHandler()

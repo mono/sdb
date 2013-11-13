@@ -45,6 +45,8 @@ namespace Mono.Debugger.Client
 
         static bool _windowsConsoleHandlerSet;
 
+        static volatile bool _inSignalHandler;
+
         static CommandLine()
         {
             Root = new RootCommand();
@@ -129,24 +131,38 @@ namespace Mono.Debugger.Client
 
         static void ControlCHandler(int signal)
         {
-            Log.Info(string.Empty);
+            // We need to do this dance because we can get a `SIGINT`
+            // while we're inside this handler.
+            if (_inSignalHandler)
+                return;
 
-            switch (Debugger.State)
+            _inSignalHandler = true;
+
+            try
             {
-                case State.Running:
-                    Debugger.Pause();
+                Log.Info(string.Empty);
 
-                    break;
-                case State.Suspended:
-                    Log.Error("Inferior is already suspended");
-                    Log.InfoSameLine(GetPrompt());
+                switch (Debugger.State)
+                {
+                    case State.Running:
+                        Debugger.Pause();
 
-                    break;
-                case State.Exited:
-                    Log.Error("No inferior process");
-                    Log.InfoSameLine(GetPrompt());
+                        break;
+                    case State.Suspended:
+                        Log.Error("Inferior is already suspended");
+                        Log.InfoSameLine(GetPrompt());
 
-                    break;
+                        break;
+                    case State.Exited:
+                        Log.Error("No inferior process");
+                        Log.InfoSameLine(GetPrompt());
+
+                        break;
+                }
+            }
+            finally
+            {
+                _inSignalHandler = false;
             }
         }
 

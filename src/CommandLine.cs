@@ -209,7 +209,9 @@ namespace Mono.Debugger.Client
                                  IEnumerable<string> commands,
                                  IEnumerable<string> files)
         {
-            Configuration.Read();
+            if (!Configuration.Read())
+                Configuration.Defaults();
+
             Configuration.Apply();
 
             Log.Notice("Welcome to the Mono soft debugger (sdb {0})", ver);

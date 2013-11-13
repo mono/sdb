@@ -78,6 +78,11 @@ namespace Mono.Debugger.Client
 
         static string GetFilePath()
         {
+            var cfg = Environment.GetEnvironmentVariable("SDB_CFG");
+
+            if (cfg != null)
+                return cfg == string.Empty ? null : cfg;
+
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
             return Path.Combine(home, ".sdb.cfg");
@@ -86,6 +91,9 @@ namespace Mono.Debugger.Client
         public static void Write()
         {
             var file = GetFilePath();
+
+            if (file == null)
+                return;
 
             try
             {
@@ -99,9 +107,12 @@ namespace Mono.Debugger.Client
             }
         }
 
-        public static void Read()
+        public static bool Read()
         {
             var file = GetFilePath();
+
+            if (file == null)
+                return false;
 
             try
             {
@@ -118,9 +129,10 @@ namespace Mono.Debugger.Client
                     Log.Error(ex.ToString());
                 }
 
-                // Set some sane defaults...
-                Defaults();
+                return false;
             }
+
+            return true;
         }
 
         public static void Defaults()

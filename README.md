@@ -197,6 +197,11 @@ in output. Normally, SDB will not use colors if it detects that `stdout` has
 been redirected, that `TERM` is set to `dumb` (or not set at all), or if the
 `DisableColors` configuration element is `true`.
 
+`SDB_CFG` can be set to a specific configuration file to use instead of the
+defaults `~/.sdb.cfg`. If set to the empty string (i.e. `SDB_CFG="" sdb`), SDB
+will not load any configuration file at all, and changed configuration values
+will not be saved.
+
 The `SDB_PATH` variable can be set to a list of additional directories that SDB
 will scan for plugin assemblies in. Each directory should be separated by a
 semicolon (Windows) or a colon (POSIX).

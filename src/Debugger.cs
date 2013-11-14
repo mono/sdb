@@ -43,7 +43,7 @@ namespace Mono.Debugger.Client
             DebuggerLoggingService.CustomLogger = new CustomLogger();
         }
 
-        public static SoftDebuggerSession Session { get; private set; }
+        static SoftDebuggerSession _session;
 
         public static FileInfo CurrentExecutable { get; private set; }
 
@@ -85,10 +85,10 @@ namespace Mono.Debugger.Client
             {
                 lock (_lock)
                 {
-                    if (Session == null || Session.HasExited || !Session.IsConnected)
+                    if (_session == null || _session.HasExited || !_session.IsConnected)
                         return State.Exited;
 
-                    return Session.IsRunning ? State.Running : State.Suspended;
+                    return _session.IsRunning ? State.Running : State.Suspended;
                 }
             }
         }
@@ -105,7 +105,7 @@ namespace Mono.Debugger.Client
             get
             {
                 lock (_lock)
-                    return Session == null ? null : Session.ActiveThread;
+                    return _session == null ? null : _session.ActiveThread;
             }
         }
 
@@ -185,13 +185,13 @@ namespace Mono.Debugger.Client
         {
             lock (_lock)
             {
-                if (Session != null)
+                if (_session != null)
                     return;
 
-                Session = new SoftDebuggerSession();
-                Session.Breakpoints = BreakEvents;
+                _session = new SoftDebuggerSession();
+                _session.Breakpoints = BreakEvents;
 
-                Session.ExceptionHandler = ex =>
+                _session.ExceptionHandler = ex =>
                 {
                     if (Configuration.Current.LogInternalErrors)
                     {
@@ -202,13 +202,13 @@ namespace Mono.Debugger.Client
                     return true;
                 };
 
-                Session.LogWriter = (isStdErr, text) =>
+                _session.LogWriter = (isStdErr, text) =>
                 {
                     if (Configuration.Current.LogRuntimeSpew)
                         Log.NoticeSameLine("[Mono] {0}", text); // The string already has a line feed.
                 };
 
-                Session.OutputWriter = (isStdErr, text) =>
+                _session.OutputWriter = (isStdErr, text) =>
                 {
                     lock (Log.Lock)
                     {
@@ -219,7 +219,7 @@ namespace Mono.Debugger.Client
                     }
                 };
 
-                Session.TypeResolverHandler += (identifier, location) =>
+                _session.TypeResolverHandler += (identifier, location) =>
                 {
                     // I honestly have no idea how correct this is. I suspect you
                     // could probably break it in some corner cases. It does make
@@ -237,12 +237,12 @@ namespace Mono.Debugger.Client
                     return identifier;
                 };
 
-                Session.TargetEvent += (sender, e) =>
+                _session.TargetEvent += (sender, e) =>
                 {
                     Log.Debug("Event: '{0}'", e.Type);
                 };
 
-                Session.TargetStarted += (sender, e) =>
+                _session.TargetStarted += (sender, e) =>
                 {
                     _activeFrame = null;
 
@@ -251,10 +251,10 @@ namespace Mono.Debugger.Client
                                    ActiveProcess.Id, StringizeTarget());
                 };
 
-                Session.TargetReady += (sender, e) =>
+                _session.TargetReady += (sender, e) =>
                 {
                     _showResumeMessage = true;
-                    _activeProcess = Session.GetProcesses().SingleOrDefault();
+                    _activeProcess = _session.GetProcesses().SingleOrDefault();
 
                     // The inferior process has launched, so we can safely
                     // set our `SIGINT` handler without it interfering with
@@ -265,7 +265,7 @@ namespace Mono.Debugger.Client
                                ActiveProcess.Id, StringizeTarget());
                 };
 
-                Session.TargetStopped += (sender, e) =>
+                _session.TargetStopped += (sender, e) =>
                 {
                     Log.Notice("Inferior process '{0}' ('{1}') suspended",
                                ActiveProcess.Id, StringizeTarget());
@@ -274,7 +274,7 @@ namespace Mono.Debugger.Client
                     CommandLine.ResumeEvent.Set();
                 };
 
-                Session.TargetInterrupted += (sender, e) =>
+                _session.TargetInterrupted += (sender, e) =>
                 {
                     Log.Notice("Inferior process '{0}' ('{1}') interrupted",
                                ActiveProcess.Id, StringizeTarget());
@@ -283,7 +283,7 @@ namespace Mono.Debugger.Client
                     CommandLine.ResumeEvent.Set();
                 };
 
-                Session.TargetHitBreakpoint += (sender, e) =>
+                _session.TargetHitBreakpoint += (sender, e) =>
                 {
                     var bp = e.BreakEvent as Breakpoint;
                     var fbp = e.BreakEvent as FunctionBreakpoint;
@@ -304,7 +304,7 @@ namespace Mono.Debugger.Client
                     CommandLine.ResumeEvent.Set();
                 };
 
-                Session.TargetExited += (sender, e) =>
+                _session.TargetExited += (sender, e) =>
                 {
                     var p = ActiveProcess;
 
@@ -322,7 +322,7 @@ namespace Mono.Debugger.Client
                     CommandLine.ResumeEvent.Set();
                 };
 
-                Session.TargetExceptionThrown += (sender, e) =>
+                _session.TargetExceptionThrown += (sender, e) =>
                 {
                     var ex = ActiveException;
 
@@ -334,7 +334,7 @@ namespace Mono.Debugger.Client
                     CommandLine.ResumeEvent.Set();
                 };
 
-                Session.TargetUnhandledException += (sender, e) =>
+                _session.TargetUnhandledException += (sender, e) =>
                 {
                     var ex = ActiveException;
 
@@ -346,13 +346,13 @@ namespace Mono.Debugger.Client
                     CommandLine.ResumeEvent.Set();
                 };
 
-                Session.TargetThreadStarted += (sender, e) =>
+                _session.TargetThreadStarted += (sender, e) =>
                 {
                     Log.Notice("Inferior thread '{0}' ('{1}') started",
                                e.Thread.Id, e.Thread.Name);
                 };
 
-                Session.TargetThreadStopped += (sender, e) =>
+                _session.TargetThreadStopped += (sender, e) =>
                 {
                     Log.Notice("Inferior thread '{0}' ('{1}') exited",
                                e.Thread.Id, e.Thread.Name);
@@ -390,7 +390,7 @@ namespace Mono.Debugger.Client
                 // process so that it inherits that signal disposition.
                 CommandLine.UnsetControlCHandler();
 
-                Session.Run(info, Options);
+                _session.Run(info, Options);
 
                 CommandLine.InferiorExecuting = true;
             }
@@ -415,7 +415,7 @@ namespace Mono.Debugger.Client
                     TimeBetweenConnectionAttempts = Configuration.Current.ConnectionAttemptInterval
                 };
 
-                Session.Run(new SoftDebuggerStartInfo(args), Options);
+                _session.Run(new SoftDebuggerStartInfo(args), Options);
 
                 CommandLine.InferiorExecuting = true;
             }
@@ -436,7 +436,7 @@ namespace Mono.Debugger.Client
 
                 var args = new SoftDebuggerListenArgs(string.Empty, address, port);
 
-                Session.Run(new SoftDebuggerStartInfo(args), Options);
+                _session.Run(new SoftDebuggerStartInfo(args), Options);
 
                 CommandLine.InferiorExecuting = true;
             }
@@ -445,17 +445,17 @@ namespace Mono.Debugger.Client
         public static void Pause()
         {
             lock (_lock)
-                if (Session != null && Session.IsRunning)
-                    Session.Stop();
+                if (_session != null && _session.IsRunning)
+                    _session.Stop();
         }
 
         public static void Continue()
         {
             lock (_lock)
             {
-                if (Session != null && !Session.IsRunning && !Session.HasExited)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    Session.Continue();
+                    _session.Continue();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -466,16 +466,16 @@ namespace Mono.Debugger.Client
         {
             lock (_lock)
             {
-                if (Session == null)
+                if (_session == null)
                     return;
 
                 CommandLine.InferiorExecuting = true;
 
-                if (!Session.HasExited)
-                    Session.Exit();
+                if (!_session.HasExited)
+                    _session.Exit();
 
-                Session.Dispose();
-                Session = null;
+                _session.Dispose();
+                _session = null;
             }
         }
 
@@ -483,9 +483,9 @@ namespace Mono.Debugger.Client
         {
             lock (_lock)
             {
-                if (Session != null && !Session.IsRunning && !Session.HasExited)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    Session.StepLine();
+                    _session.StepLine();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -496,9 +496,9 @@ namespace Mono.Debugger.Client
         {
             lock (_lock)
             {
-                if (Session != null && !Session.IsRunning && !Session.HasExited)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    Session.StepInstruction();
+                    _session.StepInstruction();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -509,9 +509,9 @@ namespace Mono.Debugger.Client
         {
             lock (_lock)
             {
-                if (Session != null && !Session.IsRunning && !Session.HasExited)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    Session.NextLine();
+                    _session.NextLine();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -522,9 +522,9 @@ namespace Mono.Debugger.Client
         {
             lock (_lock)
             {
-                if (Session != null && !Session.IsRunning && !Session.HasExited)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    Session.NextInstruction();
+                    _session.NextInstruction();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -535,9 +535,9 @@ namespace Mono.Debugger.Client
         {
             lock (_lock)
             {
-                if (Session != null && !Session.IsRunning && !Session.HasExited)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    Session.Finish();
+                    _session.Finish();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -567,8 +567,8 @@ namespace Mono.Debugger.Client
 
             // Make sure breakpoints/catchpoints take effect.
             lock (_lock)
-                if (Session != null)
-                    Session.Breakpoints = BreakEvents;
+                if (_session != null)
+                    _session.Breakpoints = BreakEvents;
         }
 
         public static void ResetOptions()

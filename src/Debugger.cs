@@ -83,10 +83,13 @@ namespace Mono.Debugger.Client
         {
             get
             {
-                if (Session == null || Session.HasExited || !Session.IsConnected)
-                    return State.Exited;
+                lock (_lock)
+                {
+                    if (Session == null || Session.HasExited || !Session.IsConnected)
+                        return State.Exited;
 
-                return Session.IsRunning ? State.Running : State.Suspended;
+                    return Session.IsRunning ? State.Running : State.Suspended;
+                }
             }
         }
 
@@ -99,7 +102,11 @@ namespace Mono.Debugger.Client
 
         public static ThreadInfo ActiveThread
         {
-            get { return Session == null ? null : Session.ActiveThread; }
+            get
+            {
+                lock (_lock)
+                    return Session == null ? null : Session.ActiveThread;
+            }
         }
 
         public static Backtrace ActiveBacktrace
@@ -550,7 +557,6 @@ namespace Mono.Debugger.Client
         public static void ResetState()
         {
             // No need to lock on this data.
-
             WorkingDirectory = Environment.CurrentDirectory;
             Arguments = string.Empty;
             EnvironmentVariables = new Dictionary<string, string>();
@@ -560,8 +566,9 @@ namespace Mono.Debugger.Client
             BreakEvents = new BreakpointStore();
 
             // Make sure breakpoints/catchpoints take effect.
-            if (Session != null)
-                Session.Breakpoints = BreakEvents;
+            lock (_lock)
+                if (Session != null)
+                    Session.Breakpoints = BreakEvents;
         }
 
         public static void ResetOptions()

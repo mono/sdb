@@ -162,8 +162,16 @@ namespace Mono.Debugger.Client
 
                         break;
                     case State.Exited:
-                        Log.Error("No inferior process");
-                        Log.InfoSameLine(GetPrompt());
+                        // If `InferiorExecuting` is set while the state is
+                        // `Exited`, it means that we were listening or
+                        // connecting. So cancel.
+                        if (InferiorExecuting)
+                            Debugger.Kill();
+                        else
+                        {
+                            Log.Error("No inferior process");
+                            Log.InfoSameLine(GetPrompt());
+                        }
 
                         break;
                 }

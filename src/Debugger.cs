@@ -93,6 +93,14 @@ namespace Mono.Debugger.Client
             }
         }
 
+        static volatile SessionKind _kind;
+
+        public static SessionKind Kind
+        {
+            get { return _kind; }
+            set { _kind = value; }
+        }
+
         static ProcessInfo _activeProcess;
 
         public static ProcessInfo ActiveProcess
@@ -309,15 +317,23 @@ namespace Mono.Debugger.Client
                     var p = ActiveProcess;
 
                     // Can happen when a remote connection attempt fails.
-                    if (p != null)
-                        Log.Notice("Inferior process '{0}' ('{1}') exited", ActiveProcess.Id, StringizeTarget());
+                    if (p == null)
+                    {
+                        if (_kind == SessionKind.Listening)
+                            Log.Notice("Listening socket closed");
+                        else if (_kind == SessionKind.Connected)
+                            Log.Notice("Connection attempt terminated");
+                        else
+                            Log.Notice("Failed to connect to '{0}'", StringizeTarget());
+                    }
                     else
-                        Log.Notice("Failed to connect to '{0}'", StringizeTarget());
+                        Log.Notice("Inferior process '{0}' ('{1}') exited", ActiveProcess.Id, StringizeTarget());
 
                     // Make sure we clean everything up on a normal exit.
                     Kill();
 
                     _debuggeeKilled = true;
+                    _kind = SessionKind.Disconnected;
 
                     CommandLine.ResumeEvent.Set();
                 };
@@ -372,6 +388,7 @@ namespace Mono.Debugger.Client
 
                 _showResumeMessage = false;
                 _debuggeeKilled = false;
+                _kind = SessionKind.Launched;
 
                 var info = new SoftDebuggerStartInfo(Configuration.Current.RuntimePrefix,
                                                      EnvironmentVariables)
@@ -408,6 +425,7 @@ namespace Mono.Debugger.Client
 
                 _showResumeMessage = false;
                 _debuggeeKilled = false;
+                _kind = SessionKind.Connected;
 
                 var args = new SoftDebuggerConnectArgs(string.Empty, address, port)
                 {
@@ -433,6 +451,7 @@ namespace Mono.Debugger.Client
 
                 _showResumeMessage = false;
                 _debuggeeKilled = false;
+                _kind = SessionKind.Listening;
 
                 var args = new SoftDebuggerListenArgs(string.Empty, address, port);
 

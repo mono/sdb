@@ -121,6 +121,7 @@ override srcs = \
 	src/MultiCommand.cs \
 	src/Plugins.cs \
 	src/Program.cs \
+	src/SessionKind.cs \
 	src/State.cs \
 	src/Utilities.cs
 

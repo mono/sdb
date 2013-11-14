@@ -25,7 +25,10 @@ namespace Mono.Debugger.Client
     {
         public void LogError(string message, Exception ex)
         {
-            Log.Error(message + (ex != null ? Environment.NewLine + ex.ToString() : string.Empty));
+            Log.Error(message);
+
+            if (ex != null)
+                Log.Error(ex.ToString());
         }
 
         public void LogAndShowException(string message, Exception ex)

@@ -39,5 +39,8 @@ namespace Mono.Debugger.Client
 
         [DllImport("libc", EntryPoint = "signal")]
         public static extern IntPtr SetSignal(int signal, IntPtr handler);
+
+        [DllImport("libc", EntryPoint = "printf")]
+        public static extern int Print(string value);
     }
 }

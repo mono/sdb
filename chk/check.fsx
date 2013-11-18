@@ -100,13 +100,13 @@ let runTest () =
 (* Assertion Functions                                                 *)
 (* ------------------------------------------------------------------- *)
 
-let assertRecv proc pat =
+let assertRecv (proc : Process) (pat : string) =
     let txt = recv proc
 
     if not(Regex.IsMatch(txt, pat)) then
         failwith(String.Format("stdout string '{0}' did not match pattern '{1}'", txt, pat))
 
-let assertRecvErr proc pat =
+let assertRecvErr (proc : Process) (pat : string) =
     let txt = recvErr proc
 
     if not(Regex.IsMatch(txt, pat)) then

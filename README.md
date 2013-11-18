@@ -30,12 +30,21 @@ You could, for example, just add the `bin` directory to your `PATH`:
 
     (sdb)
 
+You can run the SDB test suite with:
+
+    $ make check
+
+It's generally a good idea to do that to ensure that SDB works correctly on
+your system before you start using it.
+
 The following variables can be set in your environment or on the Make command
 line to affect the build:
 
     * `CD`: Path to the `cd` POSIX utility.
     * `CHMOD`: Path to the `chmod` POSIX utility.
     * `CP`: Path to the `cp` POSIX utility.
+    * `FSHARPI`: Which F# Interactive executable to use.
+    * `FSHARPI_FLAGS`: Flags to pass to F# Interactive.
     * `GENDARME`: Which Gendarme executable to use (optional).
     * `GENDARME_FLAGS`: Flags to pass to Gendarme.
     * `MCS`: Which MCS executable to use.

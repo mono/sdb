@@ -1,6 +1,7 @@
 CD ?= cd
 CHMOD ?= chmod
 CP ?= cp
+FSHARPI ?= fsharpi
 GENDARME ?= gendarme
 MCS ?= mcs
 MKDIR ?= mkdir
@@ -26,8 +27,9 @@ endif
 MCS_FLAGS += -langversion:future -unsafe -warnaserror
 XBUILD_FLAGS += /verbosity:quiet /nologo /property:Configuration=$(xb_mode)
 GENDARME_FLAGS += --severity all --confidence all
+FSHARPI_FLAGS += --exec
 
-.PHONY: all clean gendarme
+.PHONY: all clean gendarme check
 
 override results = \
 	sdb.exe \
@@ -44,6 +46,9 @@ clean:
 
 gendarme: bin/sdb.exe
 	$(GENDARME) $(GENDARME_FLAGS) --log bin/sdb.log $<
+
+check: $(addprefix bin/, $(results))
+	$(CD) chk && $(FSHARPI) $(FSHARPI_FLAGS) check.fsx
 
 override refs = \
 	ICSharpCode.NRefactory.dll \

@@ -189,7 +189,7 @@ namespace Mono.Debugger.Client.Commands
 
         public override string[] Names
         {
-            get { return new[] { "catch", "cp" }; }
+            get { return new[] { "catchpoint", "cp" }; }
         }
 
         public override string Summary

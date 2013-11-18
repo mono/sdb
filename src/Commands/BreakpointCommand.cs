@@ -502,7 +502,7 @@ namespace Mono.Debugger.Client.Commands
 
         public override string[] Names
         {
-            get { return new[] { "break", "bp" }; }
+            get { return new[] { "breakpoint", "bp" }; }
         }
 
         public override string Summary

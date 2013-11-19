@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using Mono.Debugging.Client;
 using Mono.Debugging.Soft;
 
@@ -160,6 +161,13 @@ namespace Mono.Debugger.Client
 
         static void PrintException(string prefix, ExceptionInfo ex)
         {
+            // HACK: Until we get a `WaitHandle` property on the
+            // `Mono.Debugging.Client.ExceptionInfo` type...
+            ex.Message.Discard();
+
+            while (ex.Message == "Loading...")
+                Thread.Sleep(10);
+
             Log.Error("{0}{1}: {2}", prefix, ex.Type, ex.Message);
         }
 

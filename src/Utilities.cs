@@ -29,6 +29,10 @@ namespace Mono.Debugger.Client
             get { return (int)Environment.OSVersion.Platform < (int)PlatformID.Unix; }
         }
 
+        public static void Discard<T>(this T value)
+        {
+        }
+
         public static string StringizeFrame(StackFrame frame, bool includeIndex)
         {
             var loc = string.Empty;

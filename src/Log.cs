@@ -44,12 +44,9 @@ namespace Mono.Debugger.Client
             lock (Lock)
             {
                 if (nl)
-                {
-                    LibC.Print(str);
-                    LibC.Print(Environment.NewLine);
-                }
+                    Console.WriteLine(str);
                 else
-                    LibC.Print(str);
+                    Console.Write(str);
             }
         }
 

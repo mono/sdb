@@ -1,6 +1,7 @@
 CD ?= cd
 CHMOD ?= chmod
 CP ?= cp
+FSHARPC ?= fsharpc
 FSHARPI ?= fsharpi
 GENDARME ?= gendarme
 MCS ?= mcs
@@ -10,6 +11,7 @@ SED ?= sed
 TAR ?= tar
 XBUILD ?= xbuild
 
+export MONO_PREFIX ?= /usr
 MODE ?= Debug
 
 ifeq ($(MODE), Debug)
@@ -24,12 +26,15 @@ else
 	MCS_FLAGS += -optimize
 endif
 
+FSHARPI_FLAGS += --exec
+GENDARME_FLAGS += --severity all --confidence all
 MCS_FLAGS += -langversion:future -unsafe -warnaserror
 XBUILD_FLAGS += /verbosity:quiet /nologo /property:Configuration=$(xb_mode)
-GENDARME_FLAGS += --severity all --confidence all
-FSHARPI_FLAGS += --exec
 
-.PHONY: all clean gendarme check
+FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
+MCS_TEST_FLAGS += -debug -langversion:future -unsafe -warnaserror
+
+.PHONY: all check clean clean-check clean-deps gendarme
 
 override results = \
 	sdb.exe \
@@ -40,15 +45,50 @@ override results = \
 
 all: $(addprefix bin/, $(results))
 
+define TargetType
+$(if $(findstring .exe, $(1)),exe,library)
+endef
+
+override cs_tests = \
+	cwl.exe \
+	throw.exe
+
+define CSharpTestTemplate
+chk/cs/$(1): chk/cs/$(basename $(1)).cs
+	$(MCS) $(MCS_TEST_FLAGS) -out:chk/cs/$(1) -target:$(call TargetType, $(1)) chk/cs/$(basename $(1)).cs
+endef
+
+$(foreach tgt, $(cs_tests), $(eval $(call CSharpTestTemplate,$(tgt))))
+
+override fs_tests = \
+	print.exe
+
+define FSharpTestTemplate
+chk/fs/$(1): chk/fs/$(basename $(1)).fs
+	$(FSHARPC) $(FSHARPC_TEST_FLAGS) --out:chk/fs/$(1) --target:$(call TargetType, $(1)) chk/fs/$(basename $(1)).fs
+endef
+
+$(foreach tgt, $(fs_tests), $(eval $(call FSharpTestTemplate,$(tgt))))
+
+override tests = \
+	$(addprefix chk/cs/, $(cs_tests)) \
+	$(addprefix chk/fs/, $(fs_tests))
+
+check: $(addprefix bin/, $(results)) $(tests)
+	$(CD) chk && $(FSHARPI) $(FSHARPI_FLAGS) check.fsx
+
 clean:
 	$(RM) -r bin
+
+clean-check:
+	$(RM) $(tests)
+	$(RM) $(addsuffix .mdb, $(tests))
+
+clean-deps:
 	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) /target:Clean
 
 gendarme: bin/sdb.exe
 	$(GENDARME) $(GENDARME_FLAGS) --log bin/sdb.log $<
-
-check: $(addprefix bin/, $(results))
-	$(CD) chk && $(FSHARPI) $(FSHARPI_FLAGS) check.fsx
 
 override refs = \
 	ICSharpCode.NRefactory.dll \

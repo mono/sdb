@@ -43,12 +43,15 @@ line to affect the build:
     * `CD`: Path to the `cd` POSIX utility.
     * `CHMOD`: Path to the `chmod` POSIX utility.
     * `CP`: Path to the `cp` POSIX utility.
+    * `FSHARPC`: Which F# compiler executable to use.
+    * `FSHARPC_TEST_FLAGS`: Flags to pass to the F# compiler for tests.
     * `FSHARPI`: Which F# Interactive executable to use.
     * `FSHARPI_FLAGS`: Flags to pass to F# Interactive.
     * `GENDARME`: Which Gendarme executable to use (optional).
     * `GENDARME_FLAGS`: Flags to pass to Gendarme.
     * `MCS`: Which MCS executable to use.
     * `MCS_FLAGS`: Flags to pass to MCS.
+    * `MCS_TEST_FLAGS`: Flags to pass to MCS for tests.
     * `MKDIR`: Path to the `mkdir` POSIX utility.
     * `PKG_CONFIG`: Path to the `pkg-config` utility.
     * `SED`: Path to the `sed` POSIX utility.
@@ -56,8 +59,16 @@ line to affect the build:
     * `XBUILD`: Which XBuild executable to use.
     * `XBUILD_FLAGS`: Flags to pass to XBuild.
 
+Note that the F# tools are only necessary to run the test suite. Gendarme is
+also optional and is mostly used by the SDB developers. `tar` is also only used
+to package SDB releases.
+
 Additionally, `MODE` can be set to `Debug` (default) or `Release` to indicate
 the kind of build desired.
+
+Finally, `MONO_PREFIX` can be set to tell the test runner which Mono executable
+should be used. See the description of `RuntimePrefix` further down for more
+information.
 
 ## Usage
 

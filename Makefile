@@ -185,7 +185,7 @@ override srcs = \
 	src/CustomLogger.cs \
 	src/Debugger.cs \
 	src/LibC.cs \
-	src/LibReadLine.cs \
+	src/LibEdit.cs \
 	src/Log.cs \
 	src/MultiCommand.cs \
 	src/Plugins.cs \

@@ -26,15 +26,15 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Debugger.Client
 {
-    static class LibReadLine
+    static class LibEdit
     {
-        [DllImport("libreadline", EntryPoint = "rl_initialize")]
+        [DllImport("libedit", EntryPoint = "rl_initialize")]
         public static extern int Initialize();
 
-        [DllImport("libreadline", EntryPoint = "readline")]
+        [DllImport("libedit", EntryPoint = "readline")]
         public static extern string ReadLine(string prompt);
 
-        [DllImport("libreadline", EntryPoint = "add_history")]
+        [DllImport("libedit", EntryPoint = "add_history")]
         public static extern void AddHistory(string line);
     }
 }

@@ -60,7 +60,7 @@ namespace Mono.Debugger.Client
 
             try
             {
-                LibReadLine.Initialize();
+                LibEdit.Initialize();
             }
             catch (DllNotFoundException)
             {
@@ -75,7 +75,7 @@ namespace Mono.Debugger.Client
         static void Process(string cmd, bool rc)
         {
             if (!rc && _lineEditor == null)
-                LibReadLine.AddHistory(cmd);
+                LibEdit.AddHistory(cmd);
 
             var args = cmd.Trim();
 
@@ -269,7 +269,7 @@ namespace Mono.Debugger.Client
                 {
                     cmd = _lineEditor != null ?
                           _lineEditor.Edit(GetPrompt(), string.Empty) :
-                          LibReadLine.ReadLine(GetPrompt());
+                          LibEdit.ReadLine(GetPrompt());
 
                     // Did we get EOF?
                     if (cmd == null)

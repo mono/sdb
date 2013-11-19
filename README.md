@@ -6,8 +6,8 @@ such as GDB and LLDB.
 
 ## Building
 
-Building and using SDB requires a basic POSIX-like environment, the
-`libreadline` library, and an installed Mono framework.
+Building and using SDB requires a basic POSIX-like environment, the `libedit`
+library, and an installed Mono framework.
 
 First, clone the submodules:
 
@@ -300,6 +300,3 @@ Here's an example of compiling and using a test plugin:
   is because of a bug in the finalizer of `System.Timers.Timer` in Mono. This
   bug has been fixed and should be available in whatever Mono version comes
   after 3.2.5.
-* The line editor can act weirdly on OS X because it uses the `libedit` library
-  rather than `libreadline` proper. In some cases, disabling colors can fix
-  odd behavior.

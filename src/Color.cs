@@ -31,7 +31,7 @@ namespace Mono.Debugger.Client
     {
         // We need this class because the color sequences emitted by
         // the ForegroundColor, BackgroundColor, and ResetColor helpers
-        // on System.Console mess with libreadline's input and history
+        // on System.Console mess with libedit's input and history
         // tracker.
 
         static readonly bool _disableColors;

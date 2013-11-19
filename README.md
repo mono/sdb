@@ -286,14 +286,6 @@ Here's an example of compiling and using a test plugin:
     (sdb) mycmd foo bar baz
     Hello! I received: foo bar baz
 
-## Licensing
-
-Though I am not particularly fond of the GNU licenses, SDB makes use of the
-`libreadline` library which is licensed under the GPL v3. Thus, for reasons of
-practicality, SDB is licensed under the GPL v3 as well.
-
-For the boring details, see the `COPYING` file.
-
 ## Issues
 
 * Ctrl-C does not work at all. This is because `System.Console.CancelKeyPress`

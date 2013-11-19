@@ -55,9 +55,6 @@ let recvErr (proc : Process) =
 let send (proc : Process) (str : string) =
     proc.StandardInput.WriteLine(str)
 
-    // Read the prompt line.
-    recv proc |> ignore
-
 let runTest () =
     let delim = String.replicate 30 "-"
 

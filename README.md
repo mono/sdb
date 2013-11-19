@@ -288,11 +288,6 @@ Here's an example of compiling and using a test plugin:
 
 ## Issues
 
-* Ctrl-C does not work at all. This is because `System.Console.CancelKeyPress`
-  messes with the `libreadline` history key bindings, and because of a Mono bug
-  that causes child processes to be killed on Ctrl-C (BNC #699451). Please note
-  that using Ctrl-C today can leave behind suspended Mono inferior processes.
-  Ctrl-D works fine for exiting SDB, regardless.
 * There is no completion for commands - the default completion instead tries to
   complete file names which is not very useful most of the time.
 * Decompilation is not implemented. The `ICSharpCode.Decompiler` library needs

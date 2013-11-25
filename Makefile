@@ -26,7 +26,6 @@ CD ?= cd
 CHMOD ?= chmod
 CP ?= cp
 FSHARPC ?= fsharpc
-FSHARPI ?= fsharpi
 GENDARME ?= gendarme
 MCS ?= mcs
 MKDIR ?= mkdir
@@ -42,15 +41,17 @@ ifeq ($(MODE), Debug)
 	override xb_mode = net_4_0_Debug
 	override mono_opt = --debug
 
+	FSHARPC_FLAGS += --debug+
 	MCS_FLAGS += -debug
 else
 	override xb_mode = net_4_0_Release
 	override mono_opt =
 
+	FSHARPC_FLAGS += --optimize
 	MCS_FLAGS += -optimize
 endif
 
-FSHARPI_FLAGS += --exec
+FSHARPC_FLAGS += --nologo --warnaserror
 GENDARME_FLAGS += --severity all --confidence all
 MCS_FLAGS += -langversion:future -unsafe -warnaserror
 XBUILD_FLAGS += /verbosity:quiet /nologo /property:Configuration=$(xb_mode)
@@ -96,17 +97,19 @@ $(foreach tgt, $(fs_tests), $(eval $(call FSharpTestTemplate,$(tgt))))
 
 override tests = \
 	$(addprefix chk/cs/, $(cs_tests)) \
-	$(addprefix chk/fs/, $(fs_tests))
+	$(addprefix chk/cs/, $(addsuffix .mdb, $(cs_tests))) \
+	$(addprefix chk/fs/, $(fs_tests)) \
+	$(addprefix chk/fs/, $(addsuffix .mdb, $(fs_tests)))
 
-check: $(addprefix bin/, $(results)) $(tests)
-	$(CD) chk && $(FSHARPI) $(FSHARPI_FLAGS) check.fsx
+check: chk/check.exe $(addprefix bin/, $(results)) $(tests)
+	$(CD) chk && MONO_PATH=. $(MONO_PREFIX)/bin/mono check.exe
 
 clean:
 	$(RM) -r bin
 
 clean-check:
+	$(RM) chk/check.exe chk/check.exe.mdb
 	$(RM) $(tests)
-	$(RM) $(addsuffix .mdb, $(tests))
 
 clean-deps:
 	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) /target:Clean
@@ -213,6 +216,9 @@ bin/LICENSE: LICENSE
 bin/README: README.md
 	$(MKDIR) -p bin
 	$(CP) $< $@
+
+chk/check.exe: chk/check.fs mono.snk
+	$(FSHARPC) $(FSHARPC_FLAGS) --keyfile:mono.snk --out:$@ --target:exe chk/check.fs
 
 sdb.tar.gz: $(addprefix bin/, $(results))
 	$(RM) sdb.tar.gz

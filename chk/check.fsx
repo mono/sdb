@@ -212,5 +212,10 @@ runTest ()
 (* Teardown Logic                                                      *)
 (* ------------------------------------------------------------------- *)
 
+if failures = 0 then Console.ForegroundColor <- ConsoleColor.Green
 Console.WriteLine("Successes: {0}", successes)
+Console.ResetColor()
+
+if failures <> 0 then Console.ForegroundColor <- ConsoleColor.Red
 Console.WriteLine("Failures:  {0}", failures)
+Console.ResetColor()

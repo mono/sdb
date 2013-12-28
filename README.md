@@ -236,7 +236,7 @@ tagged with `CommandAttribute` will be instantiated at startup time and put
 into the root command list.
 
 For SDB to find custom commands, they should be compiled into `.dll` assemblies
-and put in `~/.sdb` (or some other directory specified `SDB_PATH`).
+and put in `~/.sdb` (or some other directory specified in `SDB_PATH`).
 
 Here's an example of compiling and using a test plugin:
 

@@ -198,7 +198,7 @@ override srcs = \
 	src/Utilities.cs
 
 bin/sdb.exe: $(srcs) $(addprefix bin/, $(refs)) mono.snk
-	$(MCS) $(MCS_FLAGS) -keyfile:mono.snk -lib:bin -out:bin/sdb.exe -target:exe $(addprefix -r:, $(refs)) $(srcs)
+	$(MCS) $(MCS_FLAGS) -keyfile:mono.snk -lib:bin -out:bin/sdb.exe -target:exe -r:Mono.Posix $(addprefix -r:, $(refs)) $(srcs)
 
 bin/sdb.exe.config: sdb.exe.config
 	$(MKDIR) -p bin

@@ -278,6 +278,11 @@ namespace Mono.Debugger.Client
                     _showResumeMessage = true;
                     _activeProcess = _session.GetProcesses().SingleOrDefault();
 
+                    // The inferior process has launched, so we can safely
+                    // set our `SIGINT` handler without it interfering with
+                    // te inferior.
+                    CommandLine.SetControlCHandler();
+
                     Log.Notice("Inferior process '{0}' ('{1}') started",
                                ActiveProcess.Id, StringizeTarget());
                 };
@@ -411,6 +416,10 @@ namespace Mono.Debugger.Client
                         TimeBetweenConnectionAttempts = Configuration.Current.ConnectionAttemptInterval
                     }
                 };
+
+                // We need to ignore `SIGINT` while we start the inferior
+                // process so that it inherits that signal disposition.
+                CommandLine.UnsetControlCHandler();
 
                 _session.Run(info, Options);
 

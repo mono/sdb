@@ -28,8 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Mono.Unix;
-using Mono.Unix.Native;
 using Mono.Terminal;
 using Mono.Debugger.Client.Commands;
 
@@ -47,7 +45,13 @@ namespace Mono.Debugger.Client
 
         static readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
 
+        static readonly LibC.SignalHandler _interruptHandler;
+
         static readonly LineEditor _lineEditor;
+
+        static bool _windowsConsoleHandlerSet;
+
+        static volatile bool _inSignalHandler;
 
         static CommandLine()
         {
@@ -63,6 +67,9 @@ namespace Mono.Debugger.Client
                 // Fall back to `Mono.Terminal.LineEditor`.
                 _lineEditor = new LineEditor(null);
             }
+
+            if (!Utilities.IsWindows)
+                _interruptHandler = new LibC.SignalHandler(ControlCHandler);
         }
 
         static void Process(string cmd, bool rc)
@@ -136,87 +143,80 @@ namespace Mono.Debugger.Client
                 _queue.Enqueue(cmd);
         }
 
-        static void ControlCHandler()
+        static void ControlCHandler(int signal)
         {
-            Log.Info(string.Empty);
+            // We need to do this dance because we can get a `SIGINT`
+            // while we're inside this handler.
+            if (_inSignalHandler)
+                return;
 
-            switch (Debugger.State)
+            _inSignalHandler = true;
+
+            try
             {
-                case State.Running:
-                    Debugger.Pause();
+                Log.Info(string.Empty);
 
-                    break;
-                case State.Suspended:
-                    Log.Error("Inferior is already suspended");
-                    Log.InfoSameLine(GetPrompt());
+                switch (Debugger.State)
+                {
+                    case State.Running:
+                        Debugger.Pause();
 
-                    break;
-                case State.Exited:
-                    // If `InferiorExecuting` is set while the state is
-                    // `Exited`, it means that we were listening or
-                    // connecting. So cancel.
-                    if (InferiorExecuting)
-                        Debugger.Kill();
-                    else
-                    {
-                        Log.Error("No inferior process");
+                        break;
+                    case State.Suspended:
+                        Log.Error("Inferior is already suspended");
                         Log.InfoSameLine(GetPrompt());
-                    }
 
-                    break;
+                        break;
+                    case State.Exited:
+                        // If `InferiorExecuting` is set while the state is
+                        // `Exited`, it means that we were listening or
+                        // connecting. So cancel.
+                        if (InferiorExecuting)
+                            Debugger.Kill();
+                        else
+                        {
+                            Log.Error("No inferior process");
+                            Log.InfoSameLine(GetPrompt());
+                        }
+
+                        break;
+                }
+            }
+            finally
+            {
+                _inSignalHandler = false;
             }
         }
 
         static void ConsoleControlCHandler(object sender, ConsoleCancelEventArgs e)
         {
-            // Note that this is only used on Windows.
-            ControlCHandler();
+            // FIXME: This is probably not the right way to go about
+            // things. We need to actually test this on Windows.
+            ControlCHandler(LibC.SignalInterrupt);
 
             e.Cancel = true;
         }
 
-        static Thread SetControlCHandler()
+        internal static void SetControlCHandler()
         {
-            if (!Configuration.Current.EnableControlC)
-                return null;
-
             if (!Utilities.IsWindows)
             {
-                var thread = new Thread(() =>
-                {
-                    try
-                    {
-                        using (var sig = new UnixSignal(Signum.SIGINT))
-                        {
-                            while (true)
-                            {
-                                sig.WaitOne();
+                var fptr = Marshal.GetFunctionPointerForDelegate(_interruptHandler);
 
-                                ControlCHandler();
-                            }
-                        }
-                    }
-                    catch (ThreadAbortException)
-                    {
-                    }
-                });
-
-                thread.Start();
-
-                return thread;
+                LibC.SetSignal(LibC.SignalInterrupt, fptr);
             }
+            else if (!_windowsConsoleHandlerSet)
+            {
+                Console.CancelKeyPress += ConsoleControlCHandler;
 
-            Console.CancelKeyPress += ConsoleControlCHandler;
-
-            return null;
+                _windowsConsoleHandlerSet = true;
+            }
         }
 
-        static void UnsetControlCHandler(Thread thread)
+        internal static void UnsetControlCHandler()
         {
-            if (thread != null)
-                thread.Abort();
-            else
-                Console.CancelKeyPress -= ConsoleControlCHandler;
+            if (!Utilities.IsWindows)
+                LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
         }
 
         internal static void Run(Version ver, bool batch, bool rc,
@@ -244,8 +244,6 @@ namespace Mono.Debugger.Client
                     RunFile(file, true);
 
             RunCommands(commands);
-
-            var thread = batch ? null : SetControlCHandler();
 
             while (!Stop)
             {
@@ -289,8 +287,8 @@ namespace Mono.Debugger.Client
 
             }
 
-            if (!batch)
-                UnsetControlCHandler(thread);
+            if (Utilities.IsWindows)
+                Console.CancelKeyPress -= ConsoleControlCHandler;
 
             // Let's not leave dead Mono processes behind...
             Debugger.Pause();

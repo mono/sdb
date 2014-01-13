@@ -280,7 +280,7 @@ namespace Mono.Debugger.Client
 
                     // The inferior process has launched, so we can safely
                     // set our `SIGINT` handler without it interfering with
-                    // te inferior.
+                    // the inferior.
                     CommandLine.SetControlCHandler();
 
                     Log.Notice("Inferior process '{0}' ('{1}') started",

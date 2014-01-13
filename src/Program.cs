@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using Mono.Options;
+using Mono.Unix.Native;
 
 namespace Mono.Debugger.Client
 {
@@ -94,8 +95,12 @@ namespace Mono.Debugger.Client
                 return 0;
             }
 
-            if (!batch && !Utilities.IsWindows)
-                LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
+            // This ugly hack is necessary because we don't want the
+            // debuggee to die if the user hits Ctrl-C. We set our signal
+            // disposition to `SIG_IGN` so that the debuggee inherits
+            // this and doesn't die.
+            if (!Utilities.IsWindows && !batch)
+                Stdlib.SetSignalAction(Signum.SIGINT, SignalAction.Ignore);
 
             CommandLine.Run(ver, batch, rc, cmds, files);
 

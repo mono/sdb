@@ -29,6 +29,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Mono.Terminal;
+using Mono.Unix;
+using Mono.Unix.Native;
 using Mono.Debugger.Client.Commands;
 
 namespace Mono.Debugger.Client
@@ -45,13 +47,11 @@ namespace Mono.Debugger.Client
 
         static readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
 
-        static readonly LibC.SignalHandler _interruptHandler;
-
         static readonly LineEditor _lineEditor;
 
         static bool _windowsConsoleHandlerSet;
 
-        static volatile bool _inSignalHandler;
+        static Thread _signalThread;
 
         static CommandLine()
         {
@@ -67,9 +67,6 @@ namespace Mono.Debugger.Client
                 // Fall back to `Mono.Terminal.LineEditor`.
                 _lineEditor = new LineEditor(null);
             }
-
-            if (!Utilities.IsWindows)
-                _interruptHandler = new LibC.SignalHandler(ControlCHandler);
         }
 
         static void Process(string cmd, bool rc)
@@ -143,80 +140,98 @@ namespace Mono.Debugger.Client
                 _queue.Enqueue(cmd);
         }
 
-        static void ControlCHandler(int signal)
+        static void ControlCHandler()
         {
-            // We need to do this dance because we can get a `SIGINT`
-            // while we're inside this handler.
-            if (_inSignalHandler)
-                return;
+            Log.Info(string.Empty);
 
-            _inSignalHandler = true;
-
-            try
+            switch (Debugger.State)
             {
-                Log.Info(string.Empty);
+                case State.Running:
+                    Debugger.Pause();
 
-                switch (Debugger.State)
-                {
-                    case State.Running:
-                        Debugger.Pause();
+                    break;
+                case State.Suspended:
+                    Log.Error("Inferior is already suspended");
+                    Log.InfoSameLine(GetPrompt());
 
-                        break;
-                    case State.Suspended:
-                        Log.Error("Inferior is already suspended");
+                    break;
+                case State.Exited:
+                    // If `InferiorExecuting` is set while the state is
+                    // `Exited`, it means that we were listening or
+                    // connecting. So cancel.
+                    if (InferiorExecuting)
+                        Debugger.Kill();
+                    else
+                    {
+                        Log.Error("No inferior process");
                         Log.InfoSameLine(GetPrompt());
+                    }
 
-                        break;
-                    case State.Exited:
-                        // If `InferiorExecuting` is set while the state is
-                        // `Exited`, it means that we were listening or
-                        // connecting. So cancel.
-                        if (InferiorExecuting)
-                            Debugger.Kill();
-                        else
-                        {
-                            Log.Error("No inferior process");
-                            Log.InfoSameLine(GetPrompt());
-                        }
-
-                        break;
-                }
-            }
-            finally
-            {
-                _inSignalHandler = false;
+                    break;
             }
         }
 
         static void ConsoleControlCHandler(object sender, ConsoleCancelEventArgs e)
         {
-            // FIXME: This is probably not the right way to go about
-            // things. We need to actually test this on Windows.
-            ControlCHandler(LibC.SignalInterrupt);
+            // This method is only fired on Windows.
+            ControlCHandler();
 
             e.Cancel = true;
         }
 
         internal static void SetControlCHandler()
         {
-            if (!Utilities.IsWindows)
+            if (Utilities.IsWindows)
             {
-                var fptr = Marshal.GetFunctionPointerForDelegate(_interruptHandler);
-
-                LibC.SetSignal(LibC.SignalInterrupt, fptr);
-            }
-            else if (!_windowsConsoleHandlerSet)
-            {
-                Console.CancelKeyPress += ConsoleControlCHandler;
+                if (!_windowsConsoleHandlerSet)
+                    Console.CancelKeyPress += ConsoleControlCHandler;
 
                 _windowsConsoleHandlerSet = true;
+            }
+            else if (_signalThread == null)
+            {
+                Stdlib.SetSignalAction(Signum.SIGINT, SignalAction.Default);
+
+                _signalThread = new Thread(() =>
+                {
+                    try
+                    {
+                        using (var sig = new UnixSignal(Signum.SIGINT))
+                        {
+                            while (true)
+                            {
+                                sig.WaitOne();
+
+                                ControlCHandler();
+                            }
+                        }
+                    }
+                    catch (ThreadAbortException)
+                    {
+                    }
+                });
+
+                _signalThread.Start();
             }
         }
 
         internal static void UnsetControlCHandler()
         {
-            if (!Utilities.IsWindows)
-                LibC.SetSignal(LibC.SignalInterrupt, LibC.IgnoreSignal);
+            if (Utilities.IsWindows)
+            {
+                Console.CancelKeyPress -= ConsoleControlCHandler;
+
+                _windowsConsoleHandlerSet = false;
+            }
+            else if (_signalThread != null)
+            {
+                _signalThread.Abort();
+                _signalThread.Join();
+
+                _signalThread = null;
+
+                Stdlib.SetSignalAction(Signum.SIGINT, SignalAction.Ignore);
+            }
         }
 
         internal static void Run(Version ver, bool batch, bool rc,
@@ -287,8 +302,8 @@ namespace Mono.Debugger.Client
 
             }
 
-            if (Utilities.IsWindows)
-                Console.CancelKeyPress -= ConsoleControlCHandler;
+            // Clean up just in case.
+            UnsetControlCHandler();
 
             // Let's not leave dead Mono processes behind...
             Debugger.Pause();

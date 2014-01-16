@@ -55,6 +55,8 @@ let recvErr (proc : Process) =
 let send (proc : Process) (str : string) =
     proc.StandardInput.WriteLine(str)
 
+    Console.WriteLine("(sdb) {0}", str)
+
 let runTest () =
     let delim = String.replicate 30 "-"
 

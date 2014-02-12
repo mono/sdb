@@ -153,6 +153,7 @@ dep/getline.cs:
 override srcs = \
 	dep/Options.cs \
 	dep/getline.cs \
+	src/Commands/ArgumentsCommand.cs \
 	src/Commands/AttachCommand.cs \
 	src/Commands/BacktraceCommand.cs \
 	src/Commands/BreakpointCommand.cs \

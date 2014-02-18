@@ -31,6 +31,7 @@ namespace Mono.Debugger.Client.Commands
         public RootCommand()
         {
             AddCommandWithName<PrintCommand>("p");
+            AddCommand<ArgumentsCommand>();
             AddCommand<AttachCommand>();
             AddCommandWithName<BreakpointCommand>("b");
             AddCommand<BacktraceCommand>();

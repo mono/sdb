@@ -6,8 +6,9 @@ such as GDB and LLDB.
 
 ## Building
 
-Building and using SDB requires a basic POSIX-like environment, the `libedit`
-library, and an installed Mono framework.
+Building and using SDB requires a basic POSIX-like environment, a Bash-like
+shell, the `libedit` library (or an API/ABI-compatible replacement), and an
+installed Mono framework.
 
 First, clone the submodules:
 
@@ -40,9 +41,11 @@ your system before you start using it.
 The following variables can be set in your environment or on the Make command
 line to affect the build:
 
+* `CAT`: Path to the `cat` POSIX utility.
 * `CD`: Path to the `cd` POSIX utility.
 * `CHMOD`: Path to the `chmod` POSIX utility.
 * `CP`: Path to the `cp` POSIX utility.
+* `ECHO`: Path to the `echo` POSIX utility.
 * `FSHARPC`: Which F# compiler executable to use.
 * `FSHARPC_FLAGS`: Flags to pass to the F# compiler.
 * `FSHARPC_TEST_FLAGS`: Flags to pass to the F# compiler for tests.

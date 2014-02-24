@@ -22,9 +22,11 @@
 # THE SOFTWARE.
 #
 
+CAT ?= cat
 CD ?= cd
 CHMOD ?= chmod
 CP ?= cp
+ECHO ?= echo
 FSHARPC ?= fsharpc
 GENDARME ?= gendarme
 MCS ?= mcs
@@ -59,7 +61,7 @@ XBUILD_FLAGS += /verbosity:quiet /nologo /property:Configuration=$(xb_mode)
 FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
 MCS_TEST_FLAGS += -debug -langversion:future -unsafe -warnaserror
 
-.PHONY: all check clean clean-check clean-deps gendarme
+.PHONY: all check clean clean-check clean-deps gendarme update-deps
 
 override results = \
 	LICENSE \
@@ -144,15 +146,9 @@ $(addprefix bin/, $(refs)):
 	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/Debug/Mono.Debugging.Soft.dll \
 		bin/Mono.Debugging.Soft.dll
 
-dep/Options.cs:
-	$(CP) `$(PKG_CONFIG) --variable=Sources mono-options` $@
-
-dep/getline.cs:
-	$(CP) `$(PKG_CONFIG) --variable=Sources mono-lineeditor` $@
-
 override srcs = \
-	dep/Options.cs \
-	dep/getline.cs \
+	src/Options.cs \
+	src/getline.cs \
 	src/Commands/ArgumentsCommand.cs \
 	src/Commands/AttachCommand.cs \
 	src/Commands/BacktraceCommand.cs \
@@ -223,3 +219,9 @@ chk/check.exe: chk/check.fs mono.snk
 sdb.tar.gz: $(addprefix bin/, $(results))
 	$(RM) sdb.tar.gz
 	$(CD) bin && $(TAR) -zcf ../sdb.tar.gz $(results) $(refs)
+
+update-deps:
+	$(ECHO) "/* DO NOT EDIT - OVERWRITTEN BY MAKEFILE */\n" > src/Options.cs
+	$(CAT) `$(PKG_CONFIG) --variable=Sources mono-options` >> src/Options.cs
+	$(ECHO) "/* DO NOT EDIT - OVERWRITTEN BY MAKEFILE */\n" > src/getline.cs
+	$(CAT) `$(PKG_CONFIG) --variable=Sources mono-lineeditor` >> src/getline.cs

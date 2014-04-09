@@ -1,7 +1,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Alex Rønne Petersen
+// Copyright (c) 2014 Alex Rønne Petersen
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,5 +26,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Mono.Debugger.Client")]
 [assembly: AssemblyProduct("Mono")]
-[assembly: AssemblyCopyright("Copyright 2013 Alex Rønne Petersen")]
+[assembly: AssemblyCopyright("Copyright 2014 Alex Rønne Petersen")]
 [assembly: AssemblyVersion("1.3.*")]

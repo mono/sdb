@@ -71,6 +71,8 @@ namespace Mono.Debugger.Client
 
         public int MemberEvaluationTimeout { get; set; }
 
+        public bool PreferDisassembly { get; set; }
+
         public string RuntimePrefix { get; set; }
 
         public bool StepOverPropertiesAndOperators { get; set; }

@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using Mono.Debugging.Client;
 
 namespace Mono.Debugger.Client
@@ -52,43 +53,61 @@ namespace Mono.Debugger.Client
                 {
                     loc += ":" + frame.SourceLocation.Line;
 
-                    StreamReader reader = null;
-
-                    try
+                    // If the user prefers disassembly, don't
+                    // even try to read the source code.
+                    if (!Configuration.Current.PreferDisassembly)
                     {
-                        reader = File.OpenText(frame.SourceLocation.FileName);
+                        StreamReader reader = null;
 
-                        var cur = 1;
-
-                        while (!reader.EndOfStream)
+                        try
                         {
-                            var str = reader.ReadLine();
+                            reader = File.OpenText(frame.SourceLocation.FileName);
 
-                            if (cur == frame.SourceLocation.Line)
+                            var cur = 1;
+
+                            while (!reader.EndOfStream)
                             {
-                                src = str;
-                                break;
-                            }
+                                var str = reader.ReadLine();
 
-                            cur++;
+                                if (cur == frame.SourceLocation.Line)
+                                {
+                                    src = str;
+                                    break;
+                                }
+
+                                cur++;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                        finally
+                        {
+                            if (reader != null)
+                                reader.Dispose();
                         }
                     }
-                    catch (Exception)
-                    {
-                    }
-                    finally
-                    {
-                        if (reader != null)
-                            reader.Dispose();
-                    }
+                }
+            }
+
+            var tag = string.Empty;
+
+            if (src == null)
+            {
+                var line = frame.Disassemble(0, 1).FirstOrDefault();
+
+                if (line != null && !line.IsOutOfRange)
+                {
+                    src = string.Format("0x{0:X8}    {1}", line.Address, line.Code);
+                    tag = "(no source)";
                 }
             }
 
             var idx = includeIndex ? string.Format("#{0} ", frame.Index) : string.Empty;
             var srcStr = src != null ? Environment.NewLine + src : string.Empty;
 
-            return string.Format("{0}[0x{1:X8}] {2}{3}{4}", idx, frame.Address,
-                                 frame.SourceLocation.MethodName, loc, srcStr);
+            return string.Format("{0}[0x{1:X8}] {2}{3}{4}{5}", idx, frame.Address,
+                                 frame.SourceLocation.MethodName, loc, tag, srcStr);
         }
 
         public static string StringizeThread(ThreadInfo thread, bool includeFrame)

@@ -67,13 +67,24 @@ namespace Mono.Debugger.Client.Commands
                     return;
                 }
 
-                var props = typeof(Configuration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-                foreach (var prop in props)
+                foreach (var prop in typeof(Configuration).GetProperties(BindingFlags.Public |
+                                                                         BindingFlags.Instance))
                 {
+                    if (prop.Name == "Extra")
+                        continue;
+
                     if (prop.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
                     {
                         Log.Info("'{0}' = '{1}'", prop.Name, prop.GetValue(Configuration.Current));
+                        return;
+                    }
+                }
+
+                foreach (var extra in Configuration.Current.Extra)
+                {
+                    if (extra.Key.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        Log.Info("'{0}' = '{1}'", extra.Key, extra.Value.Item3);
                         return;
                     }
                 }
@@ -111,10 +122,13 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                var props = typeof(Configuration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var prop in typeof(Configuration).GetProperties(BindingFlags.Public |
+                                                                         BindingFlags.Instance))
+                    if (prop.Name != "Extra")
+                        Log.Info("'{0}' = '{1}'", prop.Name, prop.GetValue(Configuration.Current));
 
-                foreach (var prop in props)
-                    Log.Info("'{0}' = '{1}'", prop.Name, prop.GetValue(Configuration.Current));
+                foreach (var extra in Configuration.Current.Extra)
+                    Log.Info("'{0}' = '{1}'", extra.Key, extra.Value.Item3);
             }
         }
 
@@ -199,24 +213,29 @@ namespace Mono.Debugger.Client.Commands
                     return;
                 }
 
-                var props = typeof(Configuration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                string fullName = null;
+                object oldVal = null;
+                object newVal = null;
 
-                foreach (var prop in props)
+                foreach (var prop in typeof(Configuration).GetProperties(BindingFlags.Public |
+                                                                         BindingFlags.Instance))
                 {
+                    if (prop.Name == "Extra")
+                        continue;
+
                     if (prop.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var was = prop.GetValue(Configuration.Current);
-
-                        object value = null;
+                        fullName = prop.Name;
+                        oldVal = prop.GetValue(Configuration.Current);
 
                         try
                         {
                             if (prop.PropertyType == typeof(bool))
-                                value = bool.Parse(rest);
+                                newVal = bool.Parse(rest);
                             else if (prop.PropertyType == typeof(int))
-                                value = int.Parse(rest);
+                                newVal = int.Parse(rest);
                             else if (prop.PropertyType == typeof(string))
-                                value = rest;
+                                newVal = rest;
                         }
                         catch (Exception ex)
                         {
@@ -229,18 +248,55 @@ namespace Mono.Debugger.Client.Commands
                             throw;
                         }
 
-                        prop.SetValue(Configuration.Current, value);
+                        prop.SetValue(Configuration.Current, newVal);
 
-                        Configuration.Write();
-                        Configuration.Apply();
-
-                        Log.Info("'{0}' = '{1}' (was '{2}')", prop.Name, value, was);
-
-                        return;
+                        break;
                     }
                 }
 
-                Log.Error("Configuration element '{0}' not found", name);
+                foreach (var extra in Configuration.Current.Extra)
+                {
+                    if (extra.Key.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        fullName = extra.Key;
+                        oldVal = extra.Value.Item3;
+
+                        try
+                        {
+                            if (extra.Value.Item1 == TypeCode.Boolean)
+                                newVal = bool.Parse(rest);
+                            else if (extra.Value.Item1 == TypeCode.Int32)
+                                newVal = int.Parse(rest);
+                            else if (extra.Value.Item1 == TypeCode.String)
+                                newVal = rest;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex is FormatException || ex is OverflowException)
+                            {
+                                Log.Error("Invalid configuration value");
+                                return;
+                            }
+
+                            throw;
+                        }
+
+                        Configuration.Current.Extra[extra.Key] =
+                            Tuple.Create(extra.Value.Item1, extra.Value.Item2, newVal);
+
+                        break;
+                    }
+                }
+
+                if (newVal != null)
+                {
+                    Configuration.Write();
+                    Configuration.Apply();
+
+                    Log.Info("'{0}' = '{1}' (was '{2}')", fullName, newVal, oldVal);
+                }
+                else
+                    Log.Error("Configuration element '{0}' not found", name);
             }
         }
 

@@ -23,7 +23,9 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using Mono.Debugging.Client;
@@ -77,11 +79,24 @@ namespace Mono.Debugger.Client
 
         public bool StepOverPropertiesAndOperators { get; set; }
 
+        public Dictionary<string, Tuple<TypeCode, object, object>> Extra { get; private set; }
+
         public static Configuration Current { get; private set; }
 
         static Configuration()
         {
             Current = new Configuration();
+        }
+
+        Configuration()
+        {
+            Extra = new Dictionary<string, Tuple<TypeCode, object, object>>();
+        }
+
+        public void Declare(string name, TypeCode type, object defaultValue)
+        {
+            if (!Extra.ContainsKey(name))
+                Extra.Add(name, Tuple.Create(type, defaultValue, defaultValue));
         }
 
         static string GetFilePath()
@@ -125,7 +140,14 @@ namespace Mono.Debugger.Client
             try
             {
                 using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                {
                     Current = (Configuration)new BinaryFormatter().Deserialize(stream);
+
+                    // For compatibility with old serialized
+                    // configuration data.
+                    if (Current.Extra == null)
+                        Current.Extra = new Dictionary<string, Tuple<TypeCode, object, object>>();
+                }
             }
             catch (Exception ex)
             {
@@ -148,7 +170,8 @@ namespace Mono.Debugger.Client
             // Cute hack to set all properties to their default values.
             foreach (var prop in typeof(Configuration).GetProperties(BindingFlags.Public |
                                                                      BindingFlags.Instance))
-                prop.SetValue(Configuration.Current, null);
+                if (prop.Name != "Extra")
+                    prop.SetValue(Configuration.Current, null);
 
             Current.AllowMethodEvaluation = true;
             Current.AllowTargetInvoke = true;
@@ -165,6 +188,11 @@ namespace Mono.Debugger.Client
             Current.MemberEvaluationTimeout = 5000;
             Current.RuntimePrefix = "/usr";
             Current.StepOverPropertiesAndOperators = true;
+
+            var defs = Current.Extra.Select(kvp => Tuple.Create(kvp.Key, kvp.Value.Item1, kvp.Value.Item2));
+
+            foreach (var def in defs)
+                Current.Extra[def.Item1] = Tuple.Create(def.Item2, def.Item3, def.Item3);
         }
 
         public static void Apply()

@@ -139,10 +139,12 @@ namespace Mono.Debugger.Client.Commands
 
                         if (i > 0 && i < lower + 2 || j >= 0 && j < upper)
                         {
+                            var lineStr = string.Format("{0,8}:    {1}", cur + 1, str);
+
                             if (cur == line - 1)
-                                Log.Emphasis(str);
+                                Log.Emphasis(lineStr);
                             else
-                                Log.Info(str);
+                                Log.Info(lineStr);
                         }
 
                         cur++;

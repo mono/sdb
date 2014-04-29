@@ -49,6 +49,7 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<EnvironmentCommand>();
             AddCommand<FrameCommand>();
             AddCommand<HelpCommand>();
+            AddCommand<JumpCommand>();
             AddCommand<KillCommand>();
             AddCommand<ListenCommand>();
             AddCommand<PluginCommand>();

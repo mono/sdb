@@ -164,6 +164,7 @@ override srcs = \
 	src/Commands/EnvironmentCommand.cs \
 	src/Commands/FrameCommand.cs \
 	src/Commands/HelpCommand.cs \
+	src/Commands/JumpCommand.cs \
 	src/Commands/KillCommand.cs \
 	src/Commands/ListenCommand.cs \
 	src/Commands/PluginCommand.cs \

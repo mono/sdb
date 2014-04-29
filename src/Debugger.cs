@@ -577,6 +577,20 @@ namespace Mono.Debugger.Client
             }
         }
 
+        public static void SetInstruction(int offset)
+        {
+            lock (_lock)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
+                    _session.SetNextStatement(offset);
+        }
+
+        public static void SetLine(string fileName, int line)
+        {
+            lock (_lock)
+                if (_session != null && !_session.IsRunning && !_session.HasExited)
+                    _session.SetNextStatement(fileName, line, 1);
+        }
+
         public static long GetWatchId()
         {
             return _nextWatchId++;

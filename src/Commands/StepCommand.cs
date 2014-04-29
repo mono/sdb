@@ -100,8 +100,8 @@ namespace Mono.Debugger.Client.Commands
 
             public StepOverCommand()
             {
-                AddCommand<StepOverLineCommand>();
                 AddCommand<StepOverInstructionCommand>();
+                AddCommand<StepOverLineCommand>();
 
                 Forward<StepOverLineCommand>();
             }
@@ -206,8 +206,8 @@ namespace Mono.Debugger.Client.Commands
 
             public StepIntoCommand()
             {
-                AddCommand<StepIntoLineCommand>();
                 AddCommand<StepIntoInstructionCommand>();
+                AddCommand<StepIntoLineCommand>();
 
                 Forward<StepIntoLineCommand>();
             }
@@ -293,7 +293,7 @@ namespace Mono.Debugger.Client.Commands
 
         public override string Summary
         {
-            get { return "Single-step through lines/instructions/methods."; }
+            get { return "Single-step through lines, instructions, and methods."; }
         }
 
         public override string Help

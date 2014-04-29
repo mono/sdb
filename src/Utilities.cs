@@ -98,7 +98,7 @@ namespace Mono.Debugger.Client
 
                 if (line != null && !line.IsOutOfRange)
                 {
-                    src = string.Format("0x{0:X8}    {1}", line.Address, line.Code);
+                    src = string.Format("    {0}", line.Code);
                     tag = " (no source)";
                 }
             }

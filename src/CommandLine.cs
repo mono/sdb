@@ -243,6 +243,28 @@ namespace Mono.Debugger.Client
 
             Configuration.Apply();
 
+            var dbFile = Configuration.Current.DefaultDatabaseFile;
+
+            if (Configuration.Current.LoadDatabaseAutomatically &&
+                !string.IsNullOrWhiteSpace(dbFile))
+            {
+                FileInfo file;
+
+                try
+                {
+                    file = new FileInfo(dbFile);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Could not open database file '{0}':", dbFile);
+                    Log.Error(ex.ToString());
+
+                    return;
+                }
+
+                Debugger.Read(file);
+            }
+
             Log.Notice("Welcome to the Mono soft debugger (sdb {0})", ver);
             Log.Notice("Type 'help' for a list of commands or 'quit' to exit");
             Log.Info(string.Empty);
@@ -299,11 +321,32 @@ namespace Mono.Debugger.Client
                     else
                         Process(cmd, false);
                 }
-
             }
 
             // Clean up just in case.
             UnsetControlCHandler();
+
+            dbFile = Configuration.Current.DefaultDatabaseFile;
+
+            if (Configuration.Current.SaveDatabaseAutomatically &&
+                !string.IsNullOrWhiteSpace(dbFile))
+            {
+                FileInfo file;
+
+                try
+                {
+                    file = new FileInfo(dbFile);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Could not open database file '{0}':", dbFile);
+                    Log.Error(ex.ToString());
+
+                    return;
+                }
+
+                Debugger.Write(file);
+            }
 
             // Let's not leave dead Mono processes behind...
             Debugger.Pause();

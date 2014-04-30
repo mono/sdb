@@ -67,6 +67,8 @@ namespace Mono.Debugger.Client
 
         public string InputPrompt { get; set; }
 
+        public bool LoadDatabaseAutomatically { get; set; }
+
         public bool LogInternalErrors { get; set; }
 
         public bool LogRuntimeSpew { get; set; }
@@ -78,6 +80,8 @@ namespace Mono.Debugger.Client
         public bool PreferDisassembly { get; set; }
 
         public string RuntimePrefix { get; set; }
+
+        public bool SaveDatabaseAutomatically { get; set; }
 
         public bool StepOverPropertiesAndOperators { get; set; }
 

@@ -701,6 +701,9 @@ namespace Mono.Debugger.Client
             EnvironmentVariables = state.EnvironmentVariables;
             Watches = state.Watches;
 
+            Breakpoints.Clear();
+            BreakEvents.Clear();
+
             foreach (var kvp in state.Breakpoints)
             {
                 Breakpoints.Add(kvp.Key, kvp.Value.Item1);

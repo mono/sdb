@@ -64,7 +64,7 @@ namespace Mono.Debugger.Client
 
         public static string Arguments { get; set; }
 
-        public static Dictionary<string, string> EnvironmentVariables { get; private set; }
+        public static SortedDictionary<string, string> EnvironmentVariables { get; private set; }
 
         public static SortedDictionary<long, string> Watches { get; private set; }
 
@@ -405,7 +405,7 @@ namespace Mono.Debugger.Client
                 _kind = SessionKind.Launched;
 
                 var info = new SoftDebuggerStartInfo(Configuration.Current.RuntimePrefix,
-                                                     EnvironmentVariables)
+                                                     new Dictionary<string, string>(EnvironmentVariables))
                 {
                     Command = file.FullName,
                     Arguments = Arguments,
@@ -606,7 +606,7 @@ namespace Mono.Debugger.Client
             // No need to lock on this data.
             WorkingDirectory = Environment.CurrentDirectory;
             Arguments = string.Empty;
-            EnvironmentVariables = new Dictionary<string, string>();
+            EnvironmentVariables = new SortedDictionary<string, string>();
             Watches = new SortedDictionary<long, string>();
             _nextWatchId = 0;
             Breakpoints = new SortedDictionary<long, BreakEvent>();
@@ -637,7 +637,7 @@ namespace Mono.Debugger.Client
 
             public string Arguments { get; set; }
 
-            public Dictionary<string, string> EnvironmentVariables { get; set; }
+            public SortedDictionary<string, string> EnvironmentVariables { get; set; }
 
             public SortedDictionary<long, string> Watches { get; set; }
 
@@ -659,8 +659,8 @@ namespace Mono.Debugger.Client
                 EnvironmentVariables = EnvironmentVariables,
                 Watches = Watches,
                 NextWatchId = _nextWatchId,
-                Breakpoints = Breakpoints.Select(x => Tuple.Create(x.Key, x.Value, BreakEvents.Contains(x.Value)))
-                                         .ToDictionary(x => x.Item1, x => Tuple.Create(x.Item2, x.Item3)),
+                Breakpoints = Breakpoints.ToDictionary(x => x.Key,
+                                                       x => Tuple.Create(x.Value, BreakEvents.Contains(x.Value))),
                 NextBreakpointId = _nextBreakpointId,
                 Catchpoints = BreakEvents.GetCatchpoints()
             };

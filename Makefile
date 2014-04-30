@@ -162,6 +162,7 @@ override srcs = \
 	src/Commands/DecompileCommand.cs \
 	src/Commands/DirectoryCommand.cs \
 	src/Commands/DisassembleCommand.cs \
+	src/Commands/DoCommand.cs \
 	src/Commands/EnvironmentCommand.cs \
 	src/Commands/FrameCommand.cs \
 	src/Commands/HelpCommand.cs \

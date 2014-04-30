@@ -47,6 +47,7 @@ namespace Mono.Debugger.Client.Commands
             AddCommand<DecompileCommand>();
             AddCommand<DirectoryCommand>();
             AddCommand<DisassembleCommand>();
+            AddCommand<DoCommand>();
             AddCommand<EnvironmentCommand>();
             AddCommand<FrameCommand>();
             AddCommand<HelpCommand>();

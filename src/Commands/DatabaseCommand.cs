@@ -60,35 +60,41 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                if (args.Length == 0)
+                string file;
+
+                if (args.Length != 0)
+                    file = args;
+                else if (!string.IsNullOrWhiteSpace(Configuration.Current.DefaultDatabaseFile))
+                    file = Configuration.Current.DefaultDatabaseFile;
+                else
                 {
                     Log.Error("No file path given");
                     return;
                 }
 
-                if (!File.Exists(args))
+                if (!File.Exists(file))
                 {
-                    Log.Error("File '{0}' does not exist", args);
+                    Log.Error("File '{0}' does not exist", file);
                     return;
                 }
 
-                FileInfo file;
+                FileInfo fileInfo;
 
                 try
                 {
-                    file = new FileInfo(args);
+                    fileInfo = new FileInfo(file);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Could not open file '{0}':", args);
+                    Log.Error("Could not open file '{0}':", file);
                     Log.Error(ex.ToString());
 
                     return;
                 }
 
-                Debugger.Read(file);
+                Debugger.Read(fileInfo);
 
-                Log.Info("Debugger state initialized from '{0}'", args);
+                Log.Info("Debugger state initialized from '{0}'", file);
             }
         }
 
@@ -119,29 +125,35 @@ namespace Mono.Debugger.Client.Commands
 
             public override void Process(string args)
             {
-                if (args.Length == 0)
+                string file;
+
+                if (args.Length != 0)
+                    file = args;
+                else if (!string.IsNullOrWhiteSpace(Configuration.Current.DefaultDatabaseFile))
+                    file = Configuration.Current.DefaultDatabaseFile;
+                else
                 {
                     Log.Error("No file path given");
                     return;
                 }
 
-                FileInfo file;
+                FileInfo fileInfo;
 
                 try
                 {
-                    file = new FileInfo(args);
+                    fileInfo = new FileInfo(file);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Could not open file '{0}':", args);
+                    Log.Error("Could not open file '{0}':", file);
                     Log.Error(ex.ToString());
 
                     return;
                 }
 
-                Debugger.Write(file);
+                Debugger.Write(fileInfo);
 
-                Log.Info("Debugger state saved to '{0}'", args);
+                Log.Info("Debugger state saved to '{0}'", file);
             }
         }
 

@@ -45,6 +45,8 @@ namespace Mono.Debugger.Client
 
         public int ConnectionAttemptInterval { get; set; }
 
+        public string DefaultDatabaseFile { get; set; }
+
         public bool DebugLogging { get; set; }
 
         public bool DisableColors { get; set; }
@@ -143,10 +145,14 @@ namespace Mono.Debugger.Client
                 {
                     Current = (Configuration)new BinaryFormatter().Deserialize(stream);
 
-                    // For compatibility with old serialized
-                    // configuration data.
+                    // Some logic to fix up older serialized
+                    // configuration data follows...
+
                     if (Current.Extra == null)
                         Current.Extra = new Dictionary<string, Tuple<TypeCode, object, object>>();
+
+                    if (Current.DefaultDatabaseFile == null)
+                        Current.DefaultDatabaseFile = string.Empty;
                 }
             }
             catch (Exception ex)
@@ -177,6 +183,7 @@ namespace Mono.Debugger.Client
             Current.AllowTargetInvoke = true;
             Current.AllowToStringCalls = true;
             Current.ConnectionAttemptInterval = 500;
+            Current.DefaultDatabaseFile = string.Empty;
             Current.EllipsizeStrings = true;
             Current.EllipsizeThreshold = 100;
             Current.EnableControlC = true;

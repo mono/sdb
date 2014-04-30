@@ -711,6 +711,9 @@ namespace Mono.Debugger.Client
 
             foreach (var cp in state.Catchpoints)
                 BreakEvents.Add(cp);
+
+            _nextWatchId = state.NextWatchId;
+            _nextBreakpointId = state.NextBreakpointId;
         }
     }
 }

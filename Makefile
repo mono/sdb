@@ -149,6 +149,7 @@ $(addprefix bin/, $(refs)):
 override srcs = \
 	src/Options.cs \
 	src/getline.cs \
+	src/Commands/AliasCommand.cs \
 	src/Commands/ArgumentsCommand.cs \
 	src/Commands/AttachCommand.cs \
 	src/Commands/BacktraceCommand.cs \

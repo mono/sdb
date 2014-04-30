@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mono.Debugger.Client.Commands;
 
 namespace Mono.Debugger.Client
 {
@@ -131,6 +132,15 @@ namespace Mono.Debugger.Client
 
             if (name != null)
             {
+                string aliasee;
+
+                // If it's an alias, we need to run this method anew.
+                if (this is RootCommand && Debugger.Aliases.TryGetValue(name, out aliasee))
+                {
+                    Process(string.Format(aliasee, args));
+                    return;
+                }
+
                 var cmd = GetCommand(name);
 
                 if (cmd != null)
@@ -147,13 +157,10 @@ namespace Mono.Debugger.Client
         {
             if (invalidSubCommand)
                 Log.Error("Invalid sub-command given to '{0}'", Names[0]);
+            else if (_forwardTarget == null)
+                Log.Error("No '{0}' sub-command specified", Names[0]);
             else
-            {
-                if (_forwardTarget != null)
-                    _forwardTarget.Process(args);
-                else
-                    Log.Error("No '{0}' sub-command specified", Names[0]);
-            }
+                _forwardTarget.Process(args);
         }
     }
 }

@@ -70,6 +70,8 @@ namespace Mono.Debugger.Client
 
         public static SortedDictionary<long, BreakEvent> Breakpoints { get; private set; }
 
+        public static SortedDictionary<string, string> Aliases { get; private set; }
+
         public static BreakpointStore BreakEvents { get; private set; }
 
         public static bool DebuggeeKilled
@@ -610,6 +612,7 @@ namespace Mono.Debugger.Client
             Watches = new SortedDictionary<long, string>();
             _nextWatchId = 0;
             Breakpoints = new SortedDictionary<long, BreakEvent>();
+            Aliases = new SortedDictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
             BreakEvents = new BreakpointStore();
 
             // Make sure breakpoints/catchpoints take effect.
@@ -648,6 +651,8 @@ namespace Mono.Debugger.Client
             public long NextBreakpointId { get; set; }
 
             public ReadOnlyCollection<Catchpoint> Catchpoints { get; set; }
+
+            public SortedDictionary<string, string> Aliases { get; set; }
         }
 
         public static void Write(FileInfo file)
@@ -662,7 +667,8 @@ namespace Mono.Debugger.Client
                 Breakpoints = Breakpoints.ToDictionary(x => x.Key,
                                                        x => Tuple.Create(x.Value, BreakEvents.Contains(x.Value))),
                 NextBreakpointId = _nextBreakpointId,
-                Catchpoints = BreakEvents.GetCatchpoints()
+                Catchpoints = BreakEvents.GetCatchpoints(),
+                Aliases = Aliases,
             };
 
             try
@@ -700,6 +706,7 @@ namespace Mono.Debugger.Client
             Arguments = state.Arguments;
             EnvironmentVariables = state.EnvironmentVariables;
             Watches = state.Watches;
+            Aliases = state.Aliases;
 
             Breakpoints.Clear();
             BreakEvents.Clear();

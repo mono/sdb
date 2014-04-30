@@ -178,7 +178,8 @@ namespace Mono.Debugger.Client.Commands
                        "* Watches.\n" +
                        "* Breakpoints and catchpoints.\n" +
                        "* Session options.\n" +
-                       "* Evaluation options.";
+                       "* Evaluation options.\n" +
+                       "* Command aliases.";
             }
         }
     }

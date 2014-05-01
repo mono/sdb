@@ -22,7 +22,10 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Mono.Debugging.Client;
 
 namespace Mono.Debugger.Client.Commands
@@ -187,6 +190,57 @@ namespace Mono.Debugger.Client.Commands
                 {
                     Log.Info("No watches");
                     return;
+                }
+
+                var vals = Debugger.Watches.Select(pair =>
+                {
+                    ObjectValue obj;
+                    bool validated;
+
+                    if (f.ValidateExpression(pair.Value))
+                    {
+                        obj = f.GetExpressionValue(pair.Value, Debugger.Options.EvaluationOptions);
+                        validated = true;
+                    }
+                    else
+                    {
+                        obj = null;
+                        validated = false;
+                    }
+
+                    return Tuple.Create(pair.Key, pair.Value, obj, validated);
+                });
+
+                // We do things somewhat awkwardly here so that we can
+                // wait for all the values at once, which should display
+                // everything faster overall.
+                WaitHandle.WaitAll(vals.Where(x => x.Item4).Select(x => x.Item3.WaitHandle).ToArray());
+
+                foreach (var val in vals)
+                {
+                    string value;
+                    bool error;
+
+                    if (val.Item4)
+                    {
+                        var strErr = Utilities.StringizeValue(val.Item3);
+
+                        value = strErr.Item1;
+                        error = strErr.Item2;
+                    }
+                    else
+                    {
+                        value = "Expression is invalid";
+                        error = true;
+                    }
+
+                    var prefix = string.Format("#{0} '{1}': ", val.Item1, val.Item2);
+
+                    if (error)
+                        Log.Error("{0}{1}", prefix, value);
+                    else
+                        Log.Info("{0}{1}{2}{3} it = {4}", prefix, Color.DarkGreen,
+                                 val.Item3.TypeName, Color.Reset, value);
                 }
 
                 foreach (var pair in Debugger.Watches)

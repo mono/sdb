@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Mono.Debugging.Client;
 
 namespace Mono.Debugger.Client.Commands
@@ -82,10 +83,11 @@ namespace Mono.Debugger.Client.Commands
                     return;
                 }
 
+                // Wait for all values at once for faster overall display.
+                WaitHandle.WaitAll(vals.Select(x => x.WaitHandle).ToArray());
+
                 foreach (var val in vals)
                 {
-                    val.WaitHandle.WaitOne();
-
                     var strErr = Utilities.StringizeValue(val);
 
                     if (strErr.Item2)
@@ -256,10 +258,11 @@ namespace Mono.Debugger.Client.Commands
                     return;
                 }
 
+                // Wait for all values at once for faster overall display.
+                WaitHandle.WaitAll(vals.Select(x => x.WaitHandle).ToArray());
+
                 foreach (var val in vals)
                 {
-                    val.WaitHandle.WaitOne();
-
                     var strErr = Utilities.StringizeValue(val);
 
                     if (strErr.Item2)

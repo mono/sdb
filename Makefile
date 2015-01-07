@@ -56,7 +56,7 @@ endif
 FSHARPC_FLAGS += --nologo --warnaserror
 GENDARME_FLAGS += --severity all --confidence all
 MCS_FLAGS += -langversion:future -unsafe -warnaserror
-XBUILD_FLAGS += /verbosity:quiet /nologo /property:Configuration=$(xb_mode)
+XBUILD_FLAGS += /verbosity:quiet /property:Configuration=$(xb_mode)
 
 FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
 MCS_TEST_FLAGS += -debug -langversion:future -unsafe -warnaserror

@@ -42,7 +42,7 @@ namespace Mono.Debugger.Client.Commands
 
         public override string Syntax
         {
-            get { return "run|execute|launch <path>"; }
+            get { return "run|execute|launch [path]"; }
         }
 
         public override string Help
@@ -51,6 +51,8 @@ namespace Mono.Debugger.Client.Commands
             {
                 return "Runs an inferior process locally. The argument must be the path to the\n" +
                        "executable file (i.e. '.exe').\n" +
+                       "\n" +
+                       "Will run previous program if 'path' is omitted (if any was run in this session)." +
                        "\n" +
                        "The following debugger state is taken into account:\n" +
                        "\n" +
@@ -70,8 +72,13 @@ namespace Mono.Debugger.Client.Commands
 
             if (args.Length == 0)
             {
-                Log.Error("No program path given");
-                return;
+                if (Debugger.CurrentExecutable == null)
+                {
+                    Log.Error("No program path given (and no previous program to re-run)");
+                    return;
+                }
+                else
+                    args = Debugger.CurrentExecutable.FullName;
             }
 
             if (!File.Exists(args))

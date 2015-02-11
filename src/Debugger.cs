@@ -520,7 +520,7 @@ namespace Mono.Debugger.Client
             {
                 if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    _session.StepLine();
+                    _session.NextLine();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -533,7 +533,7 @@ namespace Mono.Debugger.Client
             {
                 if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    _session.StepInstruction();
+                    _session.NextInstruction();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -546,7 +546,7 @@ namespace Mono.Debugger.Client
             {
                 if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    _session.NextLine();
+                    _session.StepLine();
 
                     CommandLine.InferiorExecuting = true;
                 }
@@ -559,7 +559,7 @@ namespace Mono.Debugger.Client
             {
                 if (_session != null && !_session.IsRunning && !_session.HasExited)
                 {
-                    _session.NextInstruction();
+                    _session.StepInstruction();
 
                     CommandLine.InferiorExecuting = true;
                 }

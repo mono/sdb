@@ -343,7 +343,11 @@ namespace Mono.Debugger.Client
                             Log.Notice("Failed to connect to '{0}'", StringizeTarget());
                     }
                     else
-                        Log.Notice("Inferior process '{0}' ('{1}') exited", ActiveProcess.Id, StringizeTarget());
+                    {
+                        var code = e.ExitCode != null ? string.Format(" with code '{0}'", e.ExitCode) : string.Empty;
+
+                        Log.Notice("Inferior process '{0}' ('{1}') exited{2}", ActiveProcess.Id, StringizeTarget(), code);
+                    }
 
                     // Make sure we clean everything up on a normal exit.
                     Kill();

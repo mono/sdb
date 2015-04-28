@@ -27,4 +27,4 @@ using System.Reflection;
 [assembly: AssemblyTitle("Mono.Debugger.Client")]
 [assembly: AssemblyProduct("Mono")]
 [assembly: AssemblyCopyright("Copyright 2015 Alex Rønne Petersen")]
-[assembly: AssemblyVersion("1.4.*")]
+[assembly: AssemblyVersion("1.5.*")]

@@ -59,7 +59,7 @@ MCS_FLAGS += -langversion:experimental -unsafe -warnaserror
 XBUILD_FLAGS += /verbosity:quiet /property:Configuration=$(xb_mode)
 
 FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
-MCS_TEST_FLAGS += -debug -langversion:future -unsafe -warnaserror
+MCS_TEST_FLAGS += -debug -langversion:experimental -unsafe -warnaserror
 
 .PHONY: all check clean clean-check clean-deps gendarme update-deps
 

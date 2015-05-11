@@ -178,7 +178,7 @@ testLogic <- fun p ->
     assertRecv p "^             throw new Exception\(\);$"
     assertRecv p "^System.Exception: Exception of type 'System.Exception' was thrown.$"
     send p "kill"
-    assertRecv p "^Inferior process '\d*' \('throw.exe'\) exited$"
+    assertRecv p "^Inferior process '\d*' \('throw.exe'\) exited with code '0'$"
     send p "quit"
 runTest ()
 
@@ -192,7 +192,7 @@ testLogic <- fun p ->
     assertRecv p "^#0 \[0x[A-Fa-f0-9]{8}\] Print.main at .*/chk/fs/print.fs:3$"
     assertRecv p "^    printfn \"Hello World\"$"
     send p "kill"
-    assertRecv p "^Inferior process '\d*' \('print.exe'\) exited$"
+    assertRecv p "^Inferior process '\d*' \('print.exe'\) exited with code '0'$"
     send p "quit"
 runTest ()
 
@@ -206,7 +206,7 @@ testLogic <- fun p ->
     assertRecv p "^#0 \[0x[A-Fa-f0-9]{8}\] Program.Main at .*/chk/cs/cwl.cs:6$"
     assertRecv p "^    {$"
     send p "kill"
-    assertRecv p "^Inferior process '\d*' \('cwl.exe'\) exited$"
+    assertRecv p "^Inferior process '\d*' \('cwl.exe'\) exited with code '0'$"
     send p "quit"
 runTest ()
 

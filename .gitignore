@@ -1,7 +1,13 @@
 bin/*
 dep/*
-
+!/Assembiles
 *.dll
 *.exe
 *.gz
 *.mdb
+/src/bin
+/src/obj
+/packages
+/.vs
+
+*.user

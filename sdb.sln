@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sdb", "src\sdb.csproj", "{31B6E0E4-607A-4327-94B7-BA75A060C00B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", "{BCC650AF-4498-4AF9-8182-CD7E0C0E274A}"
+	ProjectSection(SolutionItems) = preProject
+		Assemblies\Mono.Debugger.Soft.dll = Assemblies\Mono.Debugger.Soft.dll
+		Assemblies\Mono.Debugging.dll = Assemblies\Mono.Debugging.dll
+		Assemblies\Mono.Debugging.Soft.dll = Assemblies\Mono.Debugging.Soft.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{76FFF537-8210-4E02-9BEE-D9F44DDA2F81}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31B6E0E4-607A-4327-94B7-BA75A060C00B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31B6E0E4-607A-4327-94B7-BA75A060C00B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31B6E0E4-607A-4327-94B7-BA75A060C00B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31B6E0E4-607A-4327-94B7-BA75A060C00B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

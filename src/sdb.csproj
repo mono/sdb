@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{31B6E0E4-607A-4327-94B7-BA75A060C00B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VisualStudio</RootNamespace>
+    <AssemblyName>VisualStudio</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.Mdb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.Pdb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Debugger.Soft">
+      <HintPath>C:\work\MonoRemoteDebugger\Assemblies\Mono.Debugger.Soft.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Debugging">
+      <HintPath>..\Assemblies\Mono.Debugging.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Debugging.Soft, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5e9ce85b0923c84f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Mono.Debugging.Soft.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Posix-4.5.4.5.0\lib\net45\Mono.Posix.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Color.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="CommandAttribute.cs" />
+    <Compile Include="CommandLine.cs" />
+    <Compile Include="Commands\AliasCommand.cs" />
+    <Compile Include="Commands\ArgumentsCommand.cs" />
+    <Compile Include="Commands\AttachCommand.cs" />
+    <Compile Include="Commands\BacktraceCommand.cs" />
+    <Compile Include="Commands\BreakpointCommand.cs" />
+    <Compile Include="Commands\CatchpointCommand.cs" />
+    <Compile Include="Commands\ConfigCommand.cs" />
+    <Compile Include="Commands\ConnectCommand.cs" />
+    <Compile Include="Commands\ContinueCommand.cs" />
+    <Compile Include="Commands\DatabaseCommand.cs" />
+    <Compile Include="Commands\DecompileCommand.cs" />
+    <Compile Include="Commands\DirectoryCommand.cs" />
+    <Compile Include="Commands\DisassembleCommand.cs" />
+    <Compile Include="Commands\DoCommand.cs" />
+    <Compile Include="Commands\EnvironmentCommand.cs" />
+    <Compile Include="Commands\FrameCommand.cs" />
+    <Compile Include="Commands\HelpCommand.cs" />
+    <Compile Include="Commands\JumpCommand.cs" />
+    <Compile Include="Commands\KillCommand.cs" />
+    <Compile Include="Commands\ListenCommand.cs" />
+    <Compile Include="Commands\PluginCommand.cs" />
+    <Compile Include="Commands\PrintCommand.cs" />
+    <Compile Include="Commands\QuitCommand.cs" />
+    <Compile Include="Commands\ResetCommand.cs" />
+    <Compile Include="Commands\RootCommand.cs" />
+    <Compile Include="Commands\RunCommand.cs" />
+    <Compile Include="Commands\SourceCommand.cs" />
+    <Compile Include="Commands\StepCommand.cs" />
+    <Compile Include="Commands\ThreadCommand.cs" />
+    <Compile Include="Commands\WatchCommand.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="CustomLogger.cs" />
+    <Compile Include="Debugger.cs" />
+    <Compile Include="getline.cs" />
+    <Compile Include="LibEdit.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="MultiCommand.cs" />
+    <Compile Include="Options.cs" />
+    <Compile Include="Plugins.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="SessionKind.cs" />
+    <Compile Include="State.cs" />
+    <Compile Include="Utilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

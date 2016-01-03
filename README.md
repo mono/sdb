@@ -206,7 +206,7 @@ serialization of the `Mono.Debugger.Client.Configuration` class. This file is
 read on startup if it exists.
 
 At startup, SDB will scan the `~/.sdb` directory for plugin assemblies. It will
-attempt to load all command and type formatter definitions.
+attempt to load all command definitions.
 
 Finally, SDB will read `~/.sdb.rc` and execute any commands (one per line) from
 it. This is useful if you prefer to change your settings with commands that you
@@ -233,10 +233,11 @@ while debugging. This may be useful to debug SDB itself.
 
 ## Plugins
 
-At the moment, SDB has one extension point which is the `Command` class and the
-associated `CommandAttribute` class. A class implementing `Command` that is
-tagged with `CommandAttribute` will be instantiated at startup time and put
-into the root command list.
+At the moment, SDB has one extension point which is the
+`Mono.Debugger.Client.Command` class and the related
+`Mono.Debugger.Client.CommandAttribute` class. A class implementing `Command`
+that is tagged with `CommandAttribute` will be instantiated at startup time and
+put into the root command list.
 
 For SDB to find custom commands, they should be compiled into `.dll` assemblies
 and put in `~/.sdb` (or some other directory specified in `SDB_PATH`).
@@ -287,18 +288,3 @@ Here's an example of compiling and using a test plugin:
 
     (sdb) mycmd foo bar baz
     Hello! I received: foo bar baz
-
-## Issues
-
-* There is no completion for commands - the default completion instead tries to
-  complete file names which is not very useful most of the time.
-* Decompilation is not implemented. The `ICSharpCode.Decompiler` library needs
-  to be separated from ILSpy for this to be practical.
-* The exit code of inferior processes is not shown. There is apparently no way
-  to get it from `Mono.Debugging`.
-* Attach support is not implemented. This requires special support in the
-  debugging libraries.
-* Some Mono versions throw a `NullReferenceException` when SDB shuts down. This
-  is because of a bug in the finalizer of `System.Timers.Timer` in Mono. This
-  bug has been fixed and should be available in whatever Mono version comes
-  after 3.2.5.

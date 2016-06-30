@@ -69,6 +69,14 @@ namespace Mono.Debugger.Client
             }
         }
 
+        internal static void SetUnixSignalAction(Signum signal, SignalAction action)
+        {
+            // This seemingly pointless method adds some
+            // indirection so that we don't load `Mono.Posix`
+            // unless we absolutely need to.
+            Stdlib.SetSignalAction(signal, action);
+        }
+
         static void Process(string cmd, bool rc)
         {
             if (!rc && _lineEditor == null)
@@ -190,7 +198,7 @@ namespace Mono.Debugger.Client
             }
             else if (_signalThread == null)
             {
-                Stdlib.SetSignalAction(Signum.SIGINT, SignalAction.Default);
+                SetUnixSignalAction(Signum.SIGINT, SignalAction.Default);
 
                 _signalThread = new Thread(() =>
                 {
@@ -230,7 +238,7 @@ namespace Mono.Debugger.Client
 
                 _signalThread = null;
 
-                Stdlib.SetSignalAction(Signum.SIGINT, SignalAction.Ignore);
+                SetUnixSignalAction(Signum.SIGINT, SignalAction.Ignore);
             }
         }
 

@@ -100,7 +100,7 @@ namespace Mono.Debugger.Client
             // disposition to `SIG_IGN` so that the debuggee inherits
             // this and doesn't die.
             if (!Utilities.IsWindows && !batch)
-                Stdlib.SetSignalAction(Signum.SIGINT, SignalAction.Ignore);
+                CommandLine.SetUnixSignalAction(Signum.SIGINT, SignalAction.Ignore);
 
             CommandLine.Run(ver, batch, rc, cmds, files);
 

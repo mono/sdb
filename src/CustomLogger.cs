@@ -46,5 +46,10 @@ namespace Mono.Debugger.Client
         {
             Log.Info(format, args);
         }
+
+        public string GetNewDebuggerLogFilename()
+        {
+            return null;
+        }
     }
 }

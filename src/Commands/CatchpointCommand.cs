@@ -60,7 +60,7 @@ namespace Mono.Debugger.Client.Commands
                 {
                     if (cp.ExceptionName == args)
                     {
-                        Log.Error("Catchpoint for '{0}' already exists");
+                        Log.Error("Catchpoint for '{0}' already exists", args);
                         return;
                     }
                 }

@@ -79,6 +79,8 @@ namespace Mono.Debugger.Client
 
         public bool PreferDisassembly { get; set; }
 
+        public string RuntimeExecutable { get; set; }
+
         public string RuntimePrefix { get; set; }
 
         public bool SaveDatabaseAutomatically { get; set; }
@@ -157,6 +159,9 @@ namespace Mono.Debugger.Client
 
                     if (Current.DefaultDatabaseFile == null)
                         Current.DefaultDatabaseFile = string.Empty;
+
+                    if (Current.RuntimeExecutable == null)
+                        Current.RuntimeExecutable = string.Empty;
                 }
             }
             catch (Exception ex)
@@ -198,6 +203,7 @@ namespace Mono.Debugger.Client
             Current.MaxConnectionAttempts = 1;
             Current.MemberEvaluationTimeout = 5000;
             Current.RuntimePrefix = "/usr";
+            Current.RuntimeExecutable = string.Empty;
             Current.StepOverPropertiesAndOperators = true;
 
             var defs = Current.Extra.Select(kvp => Tuple.Create(kvp.Key, kvp.Value.Item1, kvp.Value.Item2));

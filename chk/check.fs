@@ -81,11 +81,14 @@ let runTest () =
     for _ in 1 .. 3 do
         recv proc |> ignore
 
-    // Set the `RuntimePrefix` to `MONO_PREFIX` as
-    // specified in the `Makefile`.
+    // Set runtime location options from the `Makefile`.
     let prefix = Environment.GetEnvironmentVariable("MONO_PREFIX")
+    let exec = Environment.GetEnvironmentVariable("MONO_BINARY")
 
     send proc ("config set RuntimePrefix " + prefix)
+    recv proc |> ignore
+
+    send proc ("config set RuntimeExecutable " + exec)
     recv proc |> ignore
 
     let mutable ex = null

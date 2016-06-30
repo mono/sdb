@@ -410,17 +410,19 @@ namespace Mono.Debugger.Client
                 _debuggeeKilled = false;
                 _kind = SessionKind.Launched;
 
-                var info = new SoftDebuggerStartInfo(Configuration.Current.RuntimePrefix,
-                                                     new Dictionary<string, string>(EnvironmentVariables))
+                var args = new SoftDebuggerLaunchArgs(Configuration.Current.RuntimePrefix,
+                                                      new Dictionary<string, string>(EnvironmentVariables))
+                {
+                    MonoExecutableFileName = Configuration.Current.RuntimeExecutable,
+                    MaxConnectionAttempts = Configuration.Current.MaxConnectionAttempts,
+                    TimeBetweenConnectionAttempts = Configuration.Current.ConnectionAttemptInterval
+                };
+
+                var info = new SoftDebuggerStartInfo(args)
                 {
                     Command = file.FullName,
                     Arguments = Arguments,
-                    WorkingDirectory = WorkingDirectory,
-                    StartArgs =
-                    {
-                        MaxConnectionAttempts = Configuration.Current.MaxConnectionAttempts,
-                        TimeBetweenConnectionAttempts = Configuration.Current.ConnectionAttemptInterval
-                    }
+                    WorkingDirectory = WorkingDirectory
                 };
 
                 // We need to ignore `SIGINT` while we start the inferior

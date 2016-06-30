@@ -68,9 +68,9 @@ to package SDB releases.
 Additionally, `MODE` can be set to `Debug` (default) or `Release` to indicate
 the kind of build desired.
 
-Finally, `MONO_PREFIX` can be set to tell the test runner which Mono executable
-should be used. See the description of `RuntimePrefix` further down for more
-information.
+Finally, `MONO_PREFIX` and `MONO_BINARY` can be set to tell the test runner
+which Mono executable should be used. See the description of `RuntimePrefix`
+and `RuntimeExecutable` further down for more information.
 
 ## Usage
 
@@ -188,6 +188,13 @@ OS, which is probably not desirable everywhere. For example, on Windows, you
 will want to set it to something like `C:\Program Files (x86)\Mono-3.0.10`.
 Or if you have Mono in some other directory, you might set it to e.g.
 `/opt/mono`.
+
+The `RuntimeExecutable` element is another way to specify which Mono executable
+to use. If `RuntimePrefix` is empty, then `RuntimeExecutable` is taken as the
+full path to the Mono executable. If both elements are non-empty, they are
+combined as `Path.Combine(RuntimePrefix, "bin", RuntimeExecutable)`. This
+configuration element is useful for switching between `mono32` and `mono64` on
+OS X in particular.
 
 You may want to set `DisableColors` to `true` if you don't want the fancy ANSI
 color codes that SDB emits.

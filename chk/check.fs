@@ -63,7 +63,7 @@ let runTest () =
     Console.WriteLine("{0} {1} {0}", delim, testName)
     Console.WriteLine()
 
-    let psi = ProcessStartInfo(Path.Combine("..", "bin", "sdb"),
+    let psi = ProcessStartInfo(Path.Combine("..", "bin", "sdb.exe"),
                                Arguments = testArgs,
                                CreateNoWindow = true,
                                RedirectStandardError = true,

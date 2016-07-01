@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
-MONO_PATH=`dirname $0`:$MONO_PATH exec "`which mono`" __MONO_OPTIONS__ $MONO_OPTIONS `dirname $0`/sdb.exe "$@"
+MONO_PATH="`dirname $0`__LIB_PATH_EXTRA__:$MONO_PATH" \
+	exec "`which mono`" __MONO_OPTIONS_EXTRA__ $MONO_OPTIONS \
+	"`dirname $0`__LIB_PATH_EXTRA__/sdb.exe" \
+	"$@"

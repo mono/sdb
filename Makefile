@@ -29,9 +29,11 @@ CP ?= cp
 ECHO ?= echo
 FSHARPC ?= fsharpc
 GENDARME ?= gendarme
+INSTALL ?= install
 MCS ?= mcs
 MKDIR ?= mkdir
 PKG_CONFIG ?= pkg-config
+PREFIX ?= /usr/local
 SED ?= sed
 TAR ?= tar
 XBUILD ?= xbuild
@@ -47,7 +49,6 @@ ifeq ($(MODE), Debug)
 	MCS_FLAGS += -debug
 else
 	override xb_mode = net_4_0_Release
-	override mono_opt =
 
 	FSHARPC_FLAGS += --optimize
 	MCS_FLAGS += -optimize
@@ -56,19 +57,18 @@ endif
 FSHARPC_FLAGS += --nologo --warnaserror
 GENDARME_FLAGS += --severity all --confidence all
 MCS_FLAGS += -langversion:experimental -unsafe -warnaserror
-XBUILD_FLAGS += /verbosity:quiet /property:Configuration=$(xb_mode)
+XBUILD_FLAGS += /nologo /property:Configuration=$(xb_mode) /verbosity:quiet
 
 FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
 MCS_TEST_FLAGS += -debug -langversion:experimental -unsafe -warnaserror
 
-.PHONY: all check clean clean-check clean-deps gendarme update-deps
+.PHONY: all check clean clean-check clean-deps clean-release gendarme install release uninstall update-deps
 
 override results = \
-	LICENSE \
-	README \
 	sdb.exe \
 	sdb.exe.config \
-	sdb
+	sdb \
+	sdb-dev
 
 all: $(addprefix bin/, $(results))
 
@@ -104,7 +104,7 @@ override tests = \
 	$(addprefix chk/fs/, $(addsuffix .mdb, $(fs_tests)))
 
 check: chk/check.exe $(addprefix bin/, $(results)) $(tests)
-	$(CD) chk && MONO_PATH=. $(MONO_PREFIX)/bin/mono check.exe
+	$(CD) chk && MONO_PATH=. $(MONO_PREFIX)/bin/mono $(notdir $<)
 
 clean:
 	$(RM) -r bin
@@ -116,8 +116,39 @@ clean-check:
 clean-deps:
 	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) /target:Clean
 
+clean-release:
+	$(RM) -r rel
+
 gendarme: bin/sdb.exe
 	$(GENDARME) $(GENDARME_FLAGS) --log bin/sdb.log $<
+
+install: $(addprefix bin/, $(results))
+	$(INSTALL) -m755 -d $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/ICSharpCode.NRefactory.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/ICSharpCode.NRefactory.CSharp.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/Mono.Cecil.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/Mono.Cecil.Mdb.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/Mono.Debugger.Soft.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/Mono.Debugging.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/Mono.Debugging.Soft.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/sdb.exe $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/sdb.exe.config $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 -d $(PREFIX)/bin
+	$(INSTALL) -m755 bin/sdb $(PREFIX)/bin
+
+release: rel/sdb.tar.gz
+
+uninstall:
+	$(RM) $(PREFIX)/lib/sdb/ICSharpCode.NRefactory.dll
+	$(RM) $(PREFIX)/lib/sdb/ICSharpCode.NRefactory.CSharp.dll
+	$(RM) $(PREFIX)/lib/sdb/Mono.Cecil.dll
+	$(RM) $(PREFIX)/lib/sdb/Mono.Cecil.Mdb.dll
+	$(RM) $(PREFIX)/lib/sdb/Mono.Debugger.Soft.dll
+	$(RM) $(PREFIX)/lib/sdb/Mono.Debugging.dll
+	$(RM) $(PREFIX)/lib/sdb/Mono.Debugging.Soft.dll
+	$(RM) $(PREFIX)/lib/sdb/sdb.exe
+	$(RM) $(PREFIX)/lib/sdb/sdb.exe.config
+	$(RM) $(PREFIX)/bin/sdb
 
 override refs = \
 	ICSharpCode.NRefactory.dll \
@@ -196,8 +227,8 @@ override srcs = \
 	src/State.cs \
 	src/Utilities.cs
 
-bin/sdb.exe: $(srcs) $(addprefix bin/, $(refs)) mono.snk
-	$(MCS) $(MCS_FLAGS) -keyfile:mono.snk -lib:bin -out:bin/sdb.exe -target:exe -r:Mono.Posix $(addprefix -r:, $(refs)) $(srcs)
+bin/sdb.exe: mono.snk $(srcs) $(addprefix bin/, $(refs))
+	$(MCS) $(MCS_FLAGS) -keyfile:$< -lib:bin -out:$@ -target:exe -r:Mono.Posix $(addprefix -r:, $(refs)) $(srcs)
 
 bin/sdb.exe.config: sdb.exe.config
 	$(MKDIR) -p bin
@@ -205,23 +236,29 @@ bin/sdb.exe.config: sdb.exe.config
 
 bin/sdb: sdb.in
 	$(MKDIR) -p bin
-	$(SED) s/__MONO_OPTIONS__/$(mono_opt)/ $< > $@
+	$(SED) -e s+__LIB_PATH_EXTRA__+/../lib/sdb+ -e s+__MONO_OPTIONS_EXTRA__+$(mono_opt)+ $< > $@
 	$(CHMOD) +x $@
 
-bin/LICENSE: LICENSE
+bin/sdb-dev: sdb.in
 	$(MKDIR) -p bin
-	$(CP) $< $@
-
-bin/README: README.md
-	$(MKDIR) -p bin
-	$(CP) $< $@
+	$(SED) -e s+__LIB_PATH_EXTRA__++ -e s+__MONO_OPTIONS_EXTRA__+$(mono_opt)+ $< > $@
+	$(CHMOD) +x $@
 
 chk/check.exe: chk/check.fs mono.snk
-	$(FSHARPC) $(FSHARPC_FLAGS) --keyfile:mono.snk --out:$@ --target:exe chk/check.fs
+	$(FSHARPC) $(FSHARPC_FLAGS) --keyfile:mono.snk --out:$@ --target:exe $<
 
-sdb.tar.gz: $(addprefix bin/, $(results))
-	$(RM) sdb.tar.gz
-	$(CD) bin && $(TAR) -zcf ../sdb.tar.gz $(results) $(refs)
+override artifacts = \
+	README.md \
+	LICENSE \
+	$(addprefix bin/, $(refs)) \
+	bin/sdb.exe \
+	bin/sdb.exe.config
+
+rel/sdb.tar.gz: sdb.in $(artifacts)
+	$(MKDIR) -p rel
+	$(CP) $(artifacts) rel
+	$(CP) bin/sdb-dev rel/sdb
+	$(CD) rel && $(TAR) -zcf $(notdir $@) $(notdir $(artifacts)) sdb
 
 update-deps:
 	$(ECHO) "/* DO NOT EDIT - OVERWRITTEN BY MAKEFILE */\n" > src/Options.cs

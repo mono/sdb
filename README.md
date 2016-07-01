@@ -12,20 +12,24 @@ installed Mono framework.
 
 First, clone the submodules:
 
-	$ git submodule update --init --recursive
+    $ git submodule update --init --recursive
 
 To build, run:
 
     $ make
 
-This compiles SDB and its dependencies, and puts everything in the `bin`
-directory. This directory can be moved around freely; when executed, the `sdb`
-script will set up the environment so all the dependency assemblies are found.
+If the build succeeds, you can install SDB with:
 
-You could, for example, just add the `bin` directory to your `PATH`:
+    $ make install
+
+(You may need to invoke it with `sudo` or some such command.)
+
+You can also run SDB from within the build directory by appending it to `PATH`
+and invoking `sdb-dev`. This is mainly intended for development of SDB itself.
+An example:
 
     $ export PATH=`pwd`/bin:$PATH
-    $ sdb
+    $ sdb-dev
     Welcome to the Mono soft debugger (sdb 1.0.5058.39468)
     Type 'help' for a list of commands or 'quit' to exit
 
@@ -35,10 +39,9 @@ You can run the SDB test suite with:
 
     $ make check
 
-It's generally a good idea to do that to ensure that SDB works correctly on
-your system before you start using it.
+(This requires an F# installation.)
 
-The following variables can be set in your environment or on the Make command
+The following variables can be set in your environment or on the `make` command
 line to affect the build:
 
 * `CAT`: Path to the `cat` POSIX utility.
@@ -51,24 +54,24 @@ line to affect the build:
 * `FSHARPC_TEST_FLAGS`: Flags to pass to the F# compiler for tests.
 * `GENDARME`: Which Gendarme executable to use (optional).
 * `GENDARME_FLAGS`: Flags to pass to Gendarme.
+* `INSTALL`: Path to the `install` POSIX utility.
 * `MCS`: Which C# compiler executable to use.
 * `MCS_FLAGS`: Flags to pass to the C# compiler.
 * `MCS_TEST_FLAGS`: Flags to pass to the C# compiler for tests.
 * `MKDIR`: Path to the `mkdir` POSIX utility.
 * `PKG_CONFIG`: Path to the `pkg-config` utility.
+* `RM`: Path to the `rm` POSIX utility.
 * `SED`: Path to the `sed` POSIX utility.
 * `TAR`: Path to the `tar` POSIX utility.
 * `XBUILD`: Which XBuild executable to use.
 * `XBUILD_FLAGS`: Flags to pass to XBuild.
 
-Note that the F# tools are only necessary to run the test suite. Gendarme is
-also optional and is mostly used by the SDB developers. `tar` is also only used
-to package SDB releases.
-
 Additionally, `MODE` can be set to `Debug` (default) or `Release` to indicate
-the kind of build desired.
+the kind of build desired. `PREFIX` can be set to specify the path that the
+`install` and `uninstall` targets should operate within (defaults to
+`/usr/local`).
 
-Finally, `MONO_PREFIX` and `MONO_BINARY` can be set to tell the test runner
+Finally, `MONO_PREFIX` and `MONO_BINARY` can be set to tell the `check` target
 which Mono executable should be used. See the description of `RuntimePrefix`
 and `RuntimeExecutable` further down for more information.
 
@@ -247,7 +250,8 @@ that is tagged with `CommandAttribute` will be instantiated at startup time and
 put into the root command list.
 
 For SDB to find custom commands, they should be compiled into `.dll` assemblies
-and put in `~/.sdb` (or some other directory specified in `SDB_PATH`).
+and put in `~/.sdb` (or some other directory specified in `SDB_PATH`). Plugin
+assemblies can also be loaded manually with the `plugin` command.
 
 Here's an example of compiling and using a test plugin:
 
@@ -282,7 +286,7 @@ Here's an example of compiling and using a test plugin:
             Log.Info("Hello! I received: {0}", args);
         }
     }
-    $ mcs -debug -t:library test.cs -r:`which sdb`.exe -out:$HOME/.sdb/test.dll
+    $ mcs -debug -t:library test.cs -r:$(dirname $(which sdb))/../lib/sdb/sdb.exe -out:$HOME/.sdb/test.dll
     $ sdb
     Welcome to the Mono soft debugger (sdb 1.0.5061.14716)
     Type 'help' for a list of commands or 'quit' to exit
@@ -295,3 +299,6 @@ Here's an example of compiling and using a test plugin:
 
     (sdb) mycmd foo bar baz
     Hello! I received: foo bar baz
+
+You can look at SDB's own command classes for some examples of things that you
+can do in your commands.

@@ -32,6 +32,7 @@ GENDARME ?= gendarme
 INSTALL ?= install
 MCS ?= mcs
 MKDIR ?= mkdir
+NUGET ?= nuget
 PKG_CONFIG ?= pkg-config
 PREFIX ?= /usr/local
 SED ?= sed
@@ -160,7 +161,7 @@ override refs = \
 	Mono.Debugging.Soft.dll
 
 $(addprefix bin/, $(refs)):
-	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) debugger-libs.sln
+	$(CD) dep/debugger-libs && $(NUGET) restore && $(XBUILD) $(XBUILD_FLAGS) debugger-libs.sln
 	$(MKDIR) -p bin
 	$(CP) dep/nrefactory/bin/Debug/ICSharpCode.NRefactory.dll \
 		bin/ICSharpCode.NRefactory.dll

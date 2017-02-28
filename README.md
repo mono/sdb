@@ -59,6 +59,7 @@ line to affect the build:
 * `MCS_FLAGS`: Flags to pass to the C# compiler.
 * `MCS_TEST_FLAGS`: Flags to pass to the C# compiler for tests.
 * `MKDIR`: Path to the `mkdir` POSIX utility.
+* `NUGET`: Which nuget executable to use.
 * `PKG_CONFIG`: Path to the `pkg-config` utility.
 * `RM`: Path to the `rm` POSIX utility.
 * `SED`: Path to the `sed` POSIX utility.

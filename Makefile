@@ -63,6 +63,8 @@ XBUILD_FLAGS += /nologo /property:Configuration=$(xb_mode) /verbosity:quiet
 FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
 MCS_TEST_FLAGS += -debug -langversion:experimental -unsafe -warnaserror
 
+.NOTPARALLEL:
+
 .PHONY: all check clean clean-check clean-deps clean-release gendarme install release uninstall update-deps
 
 override results = \

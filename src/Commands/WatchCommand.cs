@@ -242,36 +242,6 @@ namespace Mono.Debugger.Client.Commands
                         Log.Info("{0}{1}{2}{3} it = {4}", prefix, Color.DarkGreen,
                                  val.Item3.TypeName, Color.Reset, value);
                 }
-
-                foreach (var pair in Debugger.Watches)
-                {
-                    ObjectValue obj = null;
-                    string value;
-                    bool error;
-
-                    if (!f.ValidateExpression(pair.Value))
-                    {
-                        value = "Expression is invalid";
-                        error = true;
-                    }
-                    else
-                    {
-                        obj = f.GetExpressionValue(pair.Value, Debugger.Options.EvaluationOptions);
-                        obj.WaitHandle.WaitOne();
-
-                        var strErr = Utilities.StringizeValue(obj);
-
-                        value = strErr.Item1;
-                        error = strErr.Item2;
-                    }
-
-                    var prefix = string.Format("#{0} '{1}': ", pair.Key, pair.Value);
-
-                    if (error)
-                        Log.Error("{0}{1}", prefix, value);
-                    else
-                        Log.Info("{0}{1}{2}{3} it = {4}", prefix, Color.DarkGreen, obj.TypeName, Color.Reset, value);
-                }
             }
         }
 

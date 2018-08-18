@@ -37,19 +37,19 @@ PKG_CONFIG ?= pkg-config
 PREFIX ?= /usr/local
 SED ?= sed
 TAR ?= tar
-XBUILD ?= xbuild
+MSBUILD ?= msbuild
 
 export MONO_PREFIX ?= /usr
 MODE ?= Debug
 
 ifeq ($(MODE), Debug)
-	override xb_mode = net_4_0_Debug
+	override xb_mode = Debug
 	override mono_opt = --debug
 
 	FSHARPC_FLAGS += --debug+
 	MCS_FLAGS += -debug
 else
-	override xb_mode = net_4_0_Release
+	override xb_mode = Release
 
 	FSHARPC_FLAGS += --optimize
 	MCS_FLAGS += -optimize
@@ -58,7 +58,7 @@ endif
 FSHARPC_FLAGS += --nologo --warnaserror
 GENDARME_FLAGS += --severity all --confidence all
 MCS_FLAGS += -langversion:experimental -unsafe -warnaserror
-XBUILD_FLAGS += /nologo /property:Configuration=$(xb_mode) /verbosity:quiet
+MSBUILD_FLAGS += /nologo /property:Configuration=$(xb_mode) /verbosity:quiet
 
 FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
 MCS_TEST_FLAGS += -debug -langversion:experimental -unsafe -warnaserror
@@ -117,7 +117,7 @@ clean-check:
 	$(RM) $(tests)
 
 clean-deps:
-	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) /target:Clean
+	$(CD) dep/debugger-libs && $(MSBUILD) $(MSBUILD_FLAGS) /target:Clean
 
 clean-release:
 	$(RM) -r rel
@@ -163,15 +163,15 @@ override refs = \
 	Mono.Debugging.Soft.dll
 
 $(addprefix bin/, $(refs)):
-	$(CD) dep/debugger-libs && $(NUGET) restore && $(XBUILD) $(XBUILD_FLAGS) debugger-libs.sln
+	$(CD) dep/debugger-libs && $(NUGET) restore debugger-libs.sln && $(MSBUILD) $(MSBUILD_FLAGS) debugger-libs.sln
 	$(MKDIR) -p bin
 	$(CP) dep/nrefactory/bin/Debug/ICSharpCode.NRefactory.dll \
 		bin/ICSharpCode.NRefactory.dll
 	$(CP) dep/nrefactory/bin/Debug/ICSharpCode.NRefactory.CSharp.dll \
 		bin/ICSharpCode.NRefactory.CSharp.dll
-	$(CP) dep/cecil/bin/$(xb_mode)/Mono.Cecil.dll \
+	$(CP) dep/debugger-libs/packages/Mono.Cecil.0.10.0-beta6/lib/net40/Mono.Cecil.dll \
 		bin/Mono.Cecil.dll
-	$(CP) dep/cecil/bin/$(xb_mode)/Mono.Cecil.Mdb.dll \
+	$(CP) dep/debugger-libs/packages/Mono.Cecil.0.10.0-beta6/lib/net40/Mono.Cecil.Mdb.dll \
 		bin/Mono.Cecil.Mdb.dll
 	$(CP) dep/debugger-libs/Mono.Debugger.Soft/bin/Debug/Mono.Debugger.Soft.dll \
 		bin/Mono.Debugger.Soft.dll

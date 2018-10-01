@@ -62,7 +62,7 @@ namespace Mono.Debugger.Client
             {
                 LibEdit.Initialize();
             }
-            catch (DllNotFoundException)
+            catch (Exception e) when (e is DllNotFoundException || e is EntryPointNotFoundException)
             {
                 // Fall back to `Mono.Terminal.LineEditor`.
                 _lineEditor = new LineEditor(null);

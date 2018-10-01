@@ -64,8 +64,8 @@ line to affect the build:
 * `RM`: Path to the `rm` POSIX utility.
 * `SED`: Path to the `sed` POSIX utility.
 * `TAR`: Path to the `tar` POSIX utility.
-* `XBUILD`: Which XBuild executable to use.
-* `XBUILD_FLAGS`: Flags to pass to XBuild.
+* `MSBUILD`: Which MSBuild executable to use.
+* `MSBUILD_FLAGS`: Flags to pass to MSBuild.
 
 Additionally, `MODE` can be set to `Debug` (default) or `Release` to indicate
 the kind of build desired. `PREFIX` can be set to specify the path that the

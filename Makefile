@@ -37,7 +37,7 @@ PKG_CONFIG ?= pkg-config
 PREFIX ?= /usr/local
 SED ?= sed
 TAR ?= tar
-XBUILD ?= xbuild
+MSBUILD ?= msbuild
 
 export MONO_PREFIX ?= /usr
 MODE ?= Debug
@@ -55,7 +55,7 @@ endif
 FSHARPC_FLAGS += --nologo --warnaserror
 GENDARME_FLAGS += --severity all --confidence all
 MCS_FLAGS += -langversion:experimental -unsafe -warnaserror
-XBUILD_FLAGS += /nologo /property:Configuration=$(MODE) /verbosity:quiet
+MSBUILD_FLAGS += /nologo /property:Configuration=$(MODE) /verbosity:quiet
 
 FSHARPC_TEST_FLAGS += --debug+ --nologo --warnaserror
 MCS_TEST_FLAGS += -debug -langversion:experimental -unsafe -warnaserror
@@ -114,7 +114,7 @@ clean-check:
 	$(RM) $(tests)
 
 clean-deps:
-	$(CD) dep/debugger-libs && $(XBUILD) $(XBUILD_FLAGS) /target:Clean debugger-libs.sln
+	$(CD) dep/debugger-libs && $(MSBUILD) $(MSBUILD_FLAGS) /target:Clean debugger-libs.sln
 
 clean-release:
 	$(RM) -r rel
@@ -175,7 +175,7 @@ override deps = \
 	$(refs)
 
 $(addprefix bin/, $(deps)):
-	$(CD) dep/debugger-libs && $(NUGET) restore debugger-libs.sln && $(XBUILD) $(XBUILD_FLAGS) debugger-libs.sln
+	$(CD) dep/debugger-libs && $(NUGET) restore debugger-libs.sln && $(MSBUILD) $(MSBUILD_FLAGS) debugger-libs.sln
 	$(MKDIR) -p bin
 	$(CP) dep/nrefactory/bin/Debug/ICSharpCode.NRefactory.dll \
 		bin/ICSharpCode.NRefactory.dll

@@ -132,7 +132,12 @@ namespace Mono.Debugger.Client
             }
             else if (value.IsUnknown)
             {
-                str = "Result is unrepresentable";
+                str = "Expression result is unrepresentable";
+                err = true;
+            }
+            else if (value.IsNotSupported || value.IsImplicitNotSupported)
+            {
+                str = "Expression is valid but evaluation is unsupported";
                 err = true;
             }
             else

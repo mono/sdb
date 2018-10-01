@@ -134,7 +134,7 @@ install: $(addprefix bin/, $(results))
 	$(INSTALL) -m755 bin/Mono.Debugging.dll $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/Mono.Debugging.Soft.dll $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/System.Collections.Immutable.dll $(PREFIX)/lib/sdb
-	$(INSTALL) -m755 bin/System.Metadata.Reflection.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/System.Reflection.Metadata.dll $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/sdb.exe $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/sdb.exe.config $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 -d $(PREFIX)/bin

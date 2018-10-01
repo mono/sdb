@@ -177,9 +177,9 @@ override deps = \
 $(addprefix bin/, $(deps)):
 	$(CD) dep/debugger-libs && $(NUGET) restore debugger-libs.sln && $(MSBUILD) $(MSBUILD_FLAGS) debugger-libs.sln
 	$(MKDIR) -p bin
-	$(CP) dep/nrefactory/bin/Release/ICSharpCode.NRefactory.dll \
+	$(CP) dep/nrefactory/bin/$(MODE)/ICSharpCode.NRefactory.dll \
 		bin/ICSharpCode.NRefactory.dll
-	$(CP) dep/nrefactory/bin/Release/ICSharpCode.NRefactory.CSharp.dll \
+	$(CP) dep/nrefactory/bin/$(MODE)/ICSharpCode.NRefactory.CSharp.dll \
 		bin/ICSharpCode.NRefactory.CSharp.dll
 	$(CP) dep/debugger-libs/packages/Microsoft.CodeAnalysis.Common.1.3.2/lib/net45/Microsoft.CodeAnalysis.dll \
 		bin/Microsoft.CodeAnalysis.dll

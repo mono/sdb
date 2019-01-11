@@ -162,7 +162,7 @@ namespace Mono.Debugger.Client
             {
                 var thr = ActiveThread;
 
-                return thr == null ? 0 : thr.ElapsedTime;
+                return thr == null ? -1 : thr.ElapsedTime;
             }
         }
 

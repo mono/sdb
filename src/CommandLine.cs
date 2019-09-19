@@ -168,7 +168,16 @@ namespace Mono.Debugger.Client
                     // `Exited`, it means that we were listening or
                     // connecting. So cancel.
                     if (InferiorExecuting)
-                        Debugger.Kill();
+                    {
+                        if (Debugger.CurrentExecutable == null)
+                        {
+                            Debugger.Detach();
+                        }
+                        else
+                        {
+                            Debugger.Kill();
+                        }
+                    }
                     else
                     {
                         Log.Error("No inferior process");

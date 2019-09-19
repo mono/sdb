@@ -23,6 +23,7 @@
 //
 
 using System.Collections.Generic;
+using System.Net;
 
 namespace Mono.Debugger.Client.Commands
 {
@@ -40,22 +41,62 @@ namespace Mono.Debugger.Client.Commands
 
         public override string Syntax
         {
-            get { return "attach <id>"; }
+            get { return "attach <address>:<port>"; }
         }
 
         public override string Help
         {
             get
             {
-                return "Attempts to attach to the given process ID.\n" +
-                       "\n" +
-                       "Currently unimplemented.";
+                return "Attempts to attach to the specified process.\n";
             }
         }
 
         public override void Process(string args)
         {
-            Log.Error("Attach support is not yet implemented.");
+            IPAddress address;
+            int port;
+
+            if (Debugger.State != State.Exited)
+            {
+                Log.Error("An inferior process is already being debugged");
+                return;
+            }
+
+            if (args.Length == 0)
+            {
+                if (Debugger.CurrentAddress == null)
+                {
+                    Log.Error("No process address and/or port given (and no process attached previously)");
+                    return;
+                }
+
+                address = Debugger.CurrentAddress;
+                port = Debugger.CurrentPort;
+            }
+            else
+            {
+                var split = args.Split(':', 2);
+                if (split.Length < 2)
+                {
+                    Log.Error("The argument does not include a semicolon.");
+                    return;
+                }
+
+                if (!IPAddress.TryParse(split[0], out address))
+                {
+                    Log.Error("Failed to parse address");
+                    return;
+                }
+
+                if (!int.TryParse(split[1], out port))
+                {
+                    Log.Error("Failed to parse port");
+                    return;
+                }
+            }
+
+            Debugger.Connect(address, port);
         }
     }
 }

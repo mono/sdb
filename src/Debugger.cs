@@ -520,6 +520,23 @@ namespace Mono.Debugger.Client
             }
         }
 
+        public static void Detach()
+        {
+            lock (_lock)
+            {
+                if (_session == null)
+                    return;
+
+                CommandLine.InferiorExecuting = true;
+
+                if (!_session.IsConnected)
+                    _session.Detach();
+
+                _session.Dispose();
+                _session = null;
+            }
+        }
+
         public static void StepOverLine()
         {
             lock (_lock)

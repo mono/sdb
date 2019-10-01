@@ -32,7 +32,6 @@ GENDARME ?= gendarme
 INSTALL ?= install
 MCS ?= mcs
 MKDIR ?= mkdir
-NUGET ?= nuget
 PKG_CONFIG ?= pkg-config
 PREFIX ?= /usr/local
 SED ?= sed
@@ -175,7 +174,7 @@ override deps = \
 	$(refs)
 
 $(addprefix bin/, $(deps)):
-	$(CD) dep/debugger-libs && $(NUGET) restore debugger-libs.sln && $(MSBUILD) $(MSBUILD_FLAGS) debugger-libs.sln
+	$(CD) dep/debugger-libs && $(MSBUILD) $(MSBUILD_FLAGS) /r debugger-libs.sln
 	$(MKDIR) -p bin
 	$(CP) dep/nrefactory/bin/$(MODE)/ICSharpCode.NRefactory.dll \
 		bin/ICSharpCode.NRefactory.dll

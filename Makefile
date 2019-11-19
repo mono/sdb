@@ -134,6 +134,7 @@ install: $(addprefix bin/, $(results))
 	$(INSTALL) -m755 bin/Mono.Debugging.Soft.dll $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/System.Collections.Immutable.dll $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/System.Reflection.Metadata.dll $(PREFIX)/lib/sdb
+	$(INSTALL) -m755 bin/Newtonsoft.Json.dll $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/sdb.exe $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 bin/sdb.exe.config $(PREFIX)/lib/sdb
 	$(INSTALL) -m755 -d $(PREFIX)/bin
@@ -153,6 +154,7 @@ uninstall:
 	$(RM) $(PREFIX)/lib/sdb/Mono.Debugging.Soft.dll
 	$(RM) $(PREFIX)/lib/sdb/System.Collections.Immutable.dll
 	$(RM) $(PREFIX)/lib/sdb/System.Reflection.Metadata.dll
+	$(RM) $(PREFIX)/lib/sdb/Newtonsoft.Json.dll
 	$(RM) $(PREFIX)/lib/sdb/sdb.exe
 	$(RM) $(PREFIX)/lib/sdb/sdb.exe.config
 	$(RM) $(PREFIX)/bin/sdb
@@ -171,6 +173,7 @@ override deps = \
 	Mono.Debugger.Soft.dll \
 	System.Collections.Immutable.dll \
 	System.Reflection.Metadata.dll \
+	Newtonsoft.Json.dll \
 	$(refs)
 
 $(addprefix bin/, $(deps)):
@@ -180,24 +183,26 @@ $(addprefix bin/, $(deps)):
 		bin/ICSharpCode.NRefactory.dll
 	$(CP) dep/nrefactory/bin/$(MODE)/ICSharpCode.NRefactory.CSharp.dll \
 		bin/ICSharpCode.NRefactory.CSharp.dll
-	$(CP) dep/debugger-libs/packages/Microsoft.CodeAnalysis.Common.1.3.2/lib/net45/Microsoft.CodeAnalysis.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Microsoft.CodeAnalysis.dll \
 		bin/Microsoft.CodeAnalysis.dll
-	$(CP) dep/debugger-libs/packages/Microsoft.CodeAnalysis.CSharp.1.3.2/lib/net45/Microsoft.CodeAnalysis.CSharp.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Microsoft.CodeAnalysis.CSharp.dll \
 		bin/Microsoft.CodeAnalysis.CSharp.dll
-	$(CP) dep/debugger-libs/packages/Mono.Cecil.0.10.0-beta6/lib/net40/Mono.Cecil.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Mono.Cecil.dll \
 		bin/Mono.Cecil.dll
-	$(CP) dep/debugger-libs/packages/Mono.Cecil.0.10.0-beta6/lib/net40/Mono.Cecil.Mdb.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Mono.Cecil.Mdb.dll \
 		bin/Mono.Cecil.Mdb.dll
-	$(CP) dep/debugger-libs/Mono.Debugger.Soft/bin/Debug/Mono.Debugger.Soft.dll \
+	$(CP) dep/debugger-libs/Mono.Debugger.Soft/bin/$(MODE)/Mono.Debugger.Soft.dll \
 		bin/Mono.Debugger.Soft.dll
-	$(CP) dep/debugger-libs/Mono.Debugging/bin/Debug/Mono.Debugging.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging/bin/$(MODE)/Mono.Debugging.dll \
 		bin/Mono.Debugging.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/Debug/Mono.Debugging.Soft.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Mono.Debugging.Soft.dll \
 		bin/Mono.Debugging.Soft.dll
-	$(CP) dep/debugger-libs/packages/System.Collections.Immutable.1.3.1/lib/netstandard1.0/System.Collections.Immutable.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/System.Collections.Immutable.dll \
 		bin/System.Collections.Immutable.dll
-	$(CP) dep/debugger-libs/packages/System.Reflection.Metadata.1.4.2/lib/netstandard1.1/System.Reflection.Metadata.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/System.Reflection.Metadata.dll \
 		bin/System.Reflection.Metadata.dll
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Newtonsoft.Json.dll \
+		bin/Newtonsoft.Json.dll
 
 override srcs = \
 	src/Options.cs \

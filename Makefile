@@ -197,12 +197,12 @@ $(addprefix bin/, $(deps)):
 		bin/Mono.Debugging.dll
 	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Mono.Debugging.Soft.dll \
 		bin/Mono.Debugging.Soft.dll
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Newtonsoft.Json.dll \
+		bin/Newtonsoft.Json.dll
 	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/System.Collections.Immutable.dll \
 		bin/System.Collections.Immutable.dll
 	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/System.Reflection.Metadata.dll \
 		bin/System.Reflection.Metadata.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Newtonsoft.Json.dll \
-		bin/Newtonsoft.Json.dll
 
 override srcs = \
 	src/Options.cs \

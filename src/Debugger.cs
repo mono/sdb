@@ -483,6 +483,23 @@ namespace Mono.Debugger.Client
             }
         }
 
+        public static void Attach(int pid)
+		{
+			lock (_lock)
+			{
+				EnsureCreated();
+
+				_showResumeMessage = false;
+				_debuggeeKilled = false;
+				_kind = SessionKind.Connected;
+
+				var proc = new ProcessInfo(pid, "mono");
+				_session.AttachToProcess(proc, Options);
+
+				CommandLine.InferiorExecuting = true;
+			}
+		}
+
         public static void Pause()
         {
             lock (_lock)

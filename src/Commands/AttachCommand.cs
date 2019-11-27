@@ -23,6 +23,8 @@
 //
 
 using System.Collections.Generic;
+using System.Threading;
+using Mono.Unix.Native;
 
 namespace Mono.Debugger.Client.Commands
 {
@@ -47,15 +49,26 @@ namespace Mono.Debugger.Client.Commands
         {
             get
             {
-                return "Attempts to attach to the given process ID.\n" +
-                       "\n" +
-                       "Currently unimplemented.";
+                return "Attempts to attach to the given process ID.";
             }
         }
 
         public override void Process(string args)
         {
-            Log.Error("Attach support is not yet implemented.");
+            int pid;
+            if (Debugger.State != State.Exited)
+            {
+                Log.Error("An inferior process is already being debugged");
+                return;
+            }
+
+
+            if (!int.TryParse(args, out pid))
+            {
+                Log.Error("Invalid process id");
+                return;
+            }
+            Debugger.Attach(pid);
         }
     }
 }

@@ -1,0 +1,23 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Install dependencies
+      run: sudo apt install -y fsharp
+    - name: Build
+      run: make -w
+    - name: Test
+      run: make -w -k check

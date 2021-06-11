@@ -333,53 +333,178 @@ namespace Mono.Debugger.Client.Commands
             }
         }
 
-        sealed class BreakpointDeleteCommand : Command
+        sealed class BreakpointDeleteCommand : MultiCommand
         {
+            sealed class BreakpointDeleteLocationCommand : Command
+            {
+                public override string[] Names
+                {
+                    get { return new[] { "location", "at" }; }
+                }
+
+                public override string Summary
+                {
+                    get { return "Delete a breakpoint by file path and line."; }
+                }
+
+                public override string Syntax
+                {
+                    get { return "break|bp delete|remove location <file> <line>"; }
+                }
+
+                public override string Help
+                {
+                    get
+                    {
+                        return "Deletes the breakpoint with the specified file path and line, if it exists.";
+                    }
+                }
+
+                public override void Process(string args)
+                {
+                    var splitArgs = args.Split(' ').Where(x => x != string.Empty);
+                    var count = splitArgs.Count();
+
+                    if (count == 0)
+                    {
+                        Log.Error("No file name given");
+                        return;
+                    }
+
+                    if (count == 1)
+                    {
+                        Log.Error("No line number given");
+                        return;
+                    }
+
+                    var lineStr = splitArgs.Last();
+
+                    int line;
+
+                    if (!int.TryParse(lineStr, out line))
+                    {
+                        Log.Error("Invalid line number");
+                        return;
+                    }
+
+                    var file = new string(args.Take(args.Length - lineStr.Length).ToArray()).Trim();
+
+                    try
+                    {
+                        file = Path.GetFullPath(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Info("Could not compute absolute path of '{0}':");
+                        Log.Info(ex.ToString());
+
+                        return;
+                    }
+
+                    long breakpointId = -1;
+                    foreach (var be in Debugger.Breakpoints)
+                    {
+                        var bp = be.Value as Breakpoint;
+
+                        if (bp == null)
+                            continue;
+
+                        if (bp.FileName == file && bp.Line == line)
+                        {
+                            breakpointId = be.Key;
+                            Debugger.BreakEvents.Remove(bp);
+                            break;
+                        }
+                    }
+
+                    if(breakpointId != -1)
+                    {
+                        Debugger.Breakpoints.Remove(breakpointId);
+                        Log.Info("Breakpoint '{0}' deleted", breakpointId);
+                    }
+                    else {
+                        Log.Error("Breakpoint not found");
+                    }
+                }
+            }
+
+            sealed class BreakpointDeleteIdCommand : Command
+            {
+                public override string[] Names
+                {
+                    get { return new[] { "id" }; }
+                }
+
+                public override string Summary
+                {
+                    get { return "Delete a breakpoint by ID."; }
+                }
+
+                public override string Syntax
+                {
+                    get { return "break|bp delete|remove id <id>"; }
+                }
+
+                public override string Help
+                {
+                    get
+                    {
+                        return "Deletes the breakpoint with the specified ID, if it exists.";
+                    }
+                }
+
+                public override void Process(string args)
+                {
+                    long num;
+
+                    if (!long.TryParse(args, out num))
+                    {
+                        Log.Error("Invalid breakpoint ID");
+                        return;
+                    }
+
+                    BreakEvent b;
+
+                    if (!Debugger.Breakpoints.TryGetValue(num, out b))
+                    {
+                        Log.Error("Breakpoint '{0}' not found", num);
+                        return;
+                    }
+
+                    Debugger.Breakpoints.Remove(num);
+                    Debugger.BreakEvents.Remove(b);
+
+                    Log.Info("Breakpoint '{0}' deleted", num);
+                }
+            }
+
+            public BreakpointDeleteCommand()
+            {
+                AddCommand<BreakpointDeleteLocationCommand>();
+                AddCommand<BreakpointDeleteIdCommand>();
+            }
+
             public override string[] Names
             {
-                get { return new[] { "delete", "remove" }; }
+                get { return new[] { "remove", "delete" }; }
             }
 
             public override string Summary
             {
-                get { return "Delete a breakpoint by ID."; }
-            }
-
-            public override string Syntax
-            {
-                get { return "break|bp delete|remove <id>"; }
+                get { return "Deletes a breakpoint at a location or by Id."; }
             }
 
             public override string Help
             {
                 get
                 {
-                    return "Deletes the breakpoint with the specified ID, if it exists.";
+                    return "Deletes a breakpoint at a source location or by breakpoint Id.";
                 }
             }
 
-            public override void Process(string args)
+            public override string Parent
             {
-                long num;
-
-                if (!long.TryParse(args, out num))
-                {
-                    Log.Error("Invalid breakpoint ID");
-                    return;
-                }
-
-                BreakEvent b;
-
-                if (!Debugger.Breakpoints.TryGetValue(num, out b))
-                {
-                    Log.Error("Breakpoint '{0}' not found", num);
-                    return;
-                }
-
-                Debugger.Breakpoints.Remove(num);
-                Debugger.BreakEvents.Remove(b);
-
-                Log.Info("Breakpoint '{0}' deleted", num);
+                get { return "break"; }
             }
         }
 

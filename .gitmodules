@@ -1,6 +1,6 @@
 [submodule "dep/debugger-libs"]
 	path = dep/debugger-libs
-	url = git://github.com/mono/debugger-libs
+	url = https://github.com/mono/debugger-libs
 [submodule "dep/nrefactory"]
 	path = dep/nrefactory
-	url = git://github.com/icsharpcode/NRefactory.git
+	url = https://github.com/icsharpcode/NRefactory.git

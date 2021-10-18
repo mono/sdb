@@ -264,6 +264,14 @@ namespace Mono.Debugger.Client
                 _session.TargetEvent += (sender, e) =>
                 {
                     Log.Debug("Event: '{0}'", e.Type);
+
+                    if (e.IsStopEvent)
+                    {
+                        if (ActiveFrame != null)
+                            Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
+
+                        CommandLine.ResumeEvent.Set();
+                    }
                 };
 
                 _session.TargetStarted += (sender, e) =>
@@ -293,18 +301,12 @@ namespace Mono.Debugger.Client
                 {
                     Log.Notice("Inferior process '{0}' ('{1}') suspended",
                                ActiveProcess.Id, StringizeTarget());
-                    Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
-
-                    CommandLine.ResumeEvent.Set();
                 };
 
                 _session.TargetInterrupted += (sender, e) =>
                 {
                     Log.Notice("Inferior process '{0}' ('{1}') interrupted",
                                ActiveProcess.Id, StringizeTarget());
-                    Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
-
-                    CommandLine.ResumeEvent.Set();
                 };
 
                 _session.TargetHitBreakpoint += (sender, e) =>
@@ -322,10 +324,6 @@ namespace Mono.Debugger.Client
 
                         Log.Notice("Hit breakpoint at '{0}:{1}'{2}", bp.FileName, bp.Line, cond);
                     }
-
-                    Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
-
-                    CommandLine.ResumeEvent.Set();
                 };
 
                 _session.TargetExited += (sender, e) =>
@@ -354,8 +352,6 @@ namespace Mono.Debugger.Client
 
                     _debuggeeKilled = true;
                     _kind = SessionKind.Disconnected;
-
-                    CommandLine.ResumeEvent.Set();
                 };
 
                 _session.TargetExceptionThrown += (sender, e) =>
@@ -363,11 +359,7 @@ namespace Mono.Debugger.Client
                     var ex = ActiveException;
 
                     Log.Notice("Trapped first-chance exception of type '{0}'", ex.Type);
-                    Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
-
                     PrintException(ex);
-
-                    CommandLine.ResumeEvent.Set();
                 };
 
                 _session.TargetUnhandledException += (sender, e) =>
@@ -375,11 +367,7 @@ namespace Mono.Debugger.Client
                     var ex = ActiveException;
 
                     Log.Notice("Trapped unhandled exception of type '{0}'", ex.Type);
-                    Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
-
                     PrintException(ex);
-
-                    CommandLine.ResumeEvent.Set();
                 };
 
                 _session.TargetThreadStarted += (sender, e) =>

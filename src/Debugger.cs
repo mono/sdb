@@ -156,6 +156,15 @@ namespace Mono.Debugger.Client
             }
             set { _activeFrame = value; }
         }
+        public static long ElapsedTime
+        {
+            get
+            {
+                var thr = ActiveThread;
+
+                return thr == null ? -1 : thr.ElapsedTime;
+            }
+        }
 
         public static ExceptionInfo ActiveException
         {
@@ -294,7 +303,7 @@ namespace Mono.Debugger.Client
                     Log.Notice("Inferior process '{0}' ('{1}') suspended",
                                ActiveProcess.Id, StringizeTarget());
                     Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
-
+                    Log.Notice("Elapsed Time: {0}ms", String.Format("{0:n0}", ElapsedTime));
                     CommandLine.ResumeEvent.Set();
                 };
 
@@ -324,7 +333,6 @@ namespace Mono.Debugger.Client
                     }
 
                     Log.Emphasis(Utilities.StringizeFrame(ActiveFrame, true));
-
                     CommandLine.ResumeEvent.Set();
                 };
 
